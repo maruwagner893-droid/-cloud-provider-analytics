@@ -12,7 +12,7 @@ Como objetivos concretos para saber si esto funcionó:
 Reducir el tiempo que hoy toma armar estos informes a mano, comparado con el tiempo que tarda una vez automatizado.
 Reducir los errores que hoy aparecen en los informes, gracias a las reglas de calidad del pipeline.
 Tener la información disponible rápido y de forma confiable, tanto en el dashboard como en los reportes periódicos.
-## 2. Justificación con las 5V
+## 2. Justificación de la necesidad de Big Data mediante volumen, velocidad, variedad, veracidad y valor
 
 ## 3. Inventario y perfil de fuentes
 
