@@ -29,7 +29,14 @@ Veracidad:
 Valor:
 "En este proyecto busco convertir datos crudos y con errores en información clara, confiable y fácil de consultar. Por ejemplo, FinOps hoy tiene datos con nulos y valores negativos raros mezclados con los reales; una vez que el pipeline los limpia y los separa, FinOps puede confiar en los números que ve y detectar rápidamente una anomalía real de costo, en vez de perder tiempo revisando si el dato está mal cargado o si es un problema genuino y para que el usuario tenga la informacion feaciente mas visible mas organizada."
 ## 3. Inventario y perfil de fuentes
-
+| Relación | Cardinalidad | Grano | Descripción |
+|---|---|---|---|
+| customers_orgs - users | 1:N | un usuario | Una organización puede tener muchos usuarios; un usuario pertenece a una sola organización. |
+| customers_orgs - resources | 1:N | un recurso cloud | Una organización puede tener muchos recursos; un recurso pertenece a una sola organización. |
+| customers_orgs - support_tickets | 1:N | un ticket | Una organización puede tener muchos tickets; un ticket pertenece a una sola organización. |
+| customers_orgs - marketing_touches | 1:N | una interacción de marketing | Una organización puede tener muchas interacciones de marketing; una interacción pertenece a una sola organización. |
+| customers_orgs - nps_surveys | 1:N | una respuesta de encuesta | Una organización puede tener muchas respuestas de encuesta; una respuesta pertenece a una sola organización. |
+| customers_orgs - billing_monthly | 1:N | una factura | Una
 ## 4. Arquitectura de alto nivel
 
 ## 5. Patrón arquitectónico
