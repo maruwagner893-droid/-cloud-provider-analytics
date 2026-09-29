@@ -41,6 +41,7 @@ Valor:
 | resources - usage_events_stream | 1:N | un evento de uso | Un recurso puede tener muchos eventos de uso; un evento pertenece a un solo recurso. |
 
 Frecuencias: 
+
 customers_orgs y users se crean  una sola vez, porque una organización se registra una sola vez . Lo mismo con un usuario: se da de alta una vez. 
 
 Resources, support_tickets, marketing_touches, nps_surveys para mi se crean de vez en cuando porque  considero que estos eventos pasan cuando algo puntual ocurre, sin un patrón fijo de tiempo, en el caso de un recurso se crea cuando el cliente decide desplegar algo nuevo , lo mismo con un ticket se abre cuando hay un problema y un touch de marketing pasa cuando el equipo decide hacer una campaña  y las  encuesta NPS  considero que se manda esporádicamente, no en fechas fijas.
