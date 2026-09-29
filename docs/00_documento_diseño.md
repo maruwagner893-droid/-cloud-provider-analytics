@@ -52,21 +52,25 @@ usage_events_stream  es de forma "continua" porque a diferencia de todas las dem
 
 Las tablas tienen los siguientes problemas de calidad:
 
-customers_orgs: nulos en nps_score (13.75%), y un valor fuera de rango (101)
+Customers_orgs: nulos en nps_score (13.75%), y un valor fuera de rango (101).
+Users: nulos en last_login (17.38%).
+Resources: nulos en tags_json (20.75%).
+Support_tickets: nulos en resolved_at (24%) y csat (25.4%).
+Marketing_touches: sin problemas de nulos.
+Nps_surveys: nulos en nps_score (20.65%) y comment (10.87%).
+Billing_monthly: nulos en credits (57.08%), y un subtotal negativo (-1671.83).
+Usage_events_stream: nulos en value, unit, carbon_kg y genai_tokens; además costos negativos.
 
-users: nulos en last_login (17.38%)
+Trazabilidad:
 
-resources: nulos en tags_json (20.75%)
-
-support_tickets: nulos en resolved_at (24%) y csat (25.4%)
-
-marketing_touches: sin problemas de nulos
-
-nps_surveys: nulos en nps_score (20.65%) y comment (10.87%)
-
-billing_monthly: nulos en credits (57.08%), y un subtotal negativo (-1671.83)
-
-usage_events_stream: nulos en value, unit, carbon_kg y genai_tokens; además costos negativos
+customers_orgs es un archivo formato	CSV y su clave unica es org_id donde es la Tabla central por ende todas las demas tablas se conectan a ellas por ese ID.
+users es un archivo formato CSV y su clave única es user_id y se conecta con customers_orgs a través de org_id.
+Resources es un archivo formato CSV y su clave única es resource_id y se conecta con customers_orgs a través de org_id.
+Support_tickets es un archivo formato CSV y su clave única es ticket_id y se conecta con customers_orgs a través de org_id.
+Marketing_touches es un archivo formato CSV y su clave única es touch_id y se conecta con customers_orgs a través de org_id.
+Nps_surveys es un archivo formato CSV y no tiene una clave única propia, por lo que se identifica cada encuesta con la combinación de org_id + survey_date (clave compuesta), y se conecta con customers_orgs a través de org_id.
+Billing_monthly es un archivo formato CSV y su clave única es invoice_id y se conecta con customers_orgs a través de org_id.
+Usage_events_stream es un archivo formato JSONL y su clave única es event_id y se conecta con customers_orgs a través de org_id y con resources a través de resource_id.
 ## 4. Arquitectura de alto nivel
 
 ## 5. Patrón arquitectónico
