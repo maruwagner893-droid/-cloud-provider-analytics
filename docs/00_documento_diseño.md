@@ -41,13 +41,21 @@ Valor:
 | resources - usage_events_stream | 1:N | un evento de uso | Un recurso puede tener muchos eventos de uso; un evento pertenece a un solo recurso. |
 
 Las tablas tienen los siguientes problemas de calidad:
+
 customers_orgs: nulos en nps_score (13.75%), y un valor fuera de rango (101)
+
 users: nulos en last_login (17.38%)
+
 resources: nulos en tags_json (20.75%)
+
 support_tickets: nulos en resolved_at (24%) y csat (25.4%)
+
 marketing_touches: sin problemas de nulos
+
 nps_surveys: nulos en nps_score (20.65%) y comment (10.87%)
+
 billing_monthly: nulos en credits (57.08%), y un subtotal negativo (-1671.83)
+
 usage_events_stream: nulos en value, unit, carbon_kg y genai_tokens; además costos negativos
 ## 4. Arquitectura de alto nivel
 
