@@ -80,7 +80,7 @@ Support_tickets es un archivo formato CSV y su clave única es ticket_id y se co
 
 Marketing_touches es un archivo formato CSV y su clave única es touch_id y se conecta con customers_orgs a través de org_id.
 
-Nps_surveys es un archivo formato CSV y no tiene una clave única propia, por lo que se identifica cada encuesta con la combinación de org_id + survey_date (clave compuesta), y se conecta con customers_orgs a través de org_id.
+Nps_surveys es un archivo formato CSV y no tiene una clave única propia, por lo que se identifica cada encuesta con la combinación de org_id y survey_date  como clave compuesta, y se conecta con customers_orgs a través de org_id. Esto se debe a que  si se usa solo org_id, la misma organización aparece dos veces y parecen datos repetidos  y  no  se puede distinguir cuál encuesta es cuál, pero con survey_date, cada combinación es única y podés identificar exactamente qué encuesta es.
 
 Billing_monthly es un archivo formato CSV y su clave única es invoice_id y se conecta con customers_orgs a través de org_id.
 
