@@ -28,7 +28,7 @@ Veracidad:
 
 Valor:
 "En este proyecto busco convertir datos crudos y con errores en información clara, confiable y fácil de consultar. Por ejemplo, FinOps hoy tiene datos con nulos y valores negativos raros mezclados con los reales; una vez que el pipeline los limpia y los separa, FinOps puede confiar en los números que ve y detectar rápidamente una anomalía real de costo, en vez de perder tiempo revisando si el dato está mal cargado o si es un problema genuino y para que el usuario tenga la informacion feaciente mas visible mas organizada."
-## 3. Inventario y perfil de fuentes
+## 3. Inventario y perfil inicial de las fuentes: grano, frecuencia, tipos, calidad, trazabilidad y riesgos.
 | Relación | Cardinalidad | Grano | Descripción |
 |---|---|---|---|
 | customers_orgs - users | 1:N | un usuario | Una organización puede tener muchos usuarios; un usuario pertenece a una sola organización. |
@@ -39,6 +39,16 @@ Valor:
 | customers_orgs - billing_monthly | 1:N | una factura | Una organización puede tener muchas facturas; una factura pertenece a una sola organización. |
 | customers_orgs - usage_events_stream | 1:N | un evento de uso | Una organización puede tener muchos eventos de uso; un evento pertenece a una sola organización. |
 | resources - usage_events_stream | 1:N | un evento de uso | Un recurso puede tener muchos eventos de uso; un evento pertenece a un solo recurso. |
+
+Las tablas tienen los siguientes problemas de calidad:
+customers_orgs: nulos en nps_score (13.75%), y un valor fuera de rango (101)
+users: nulos en last_login (17.38%)
+resources: nulos en tags_json (20.75%)
+support_tickets: nulos en resolved_at (24%) y csat (25.4%)
+marketing_touches: sin problemas de nulos
+nps_surveys: nulos en nps_score (20.65%) y comment (10.87%)
+billing_monthly: nulos en credits (57.08%), y un subtotal negativo (-1671.83)
+usage_events_stream: nulos en value, unit, carbon_kg y genai_tokens; además costos negativos
 ## 4. Arquitectura de alto nivel
 
 ## 5. Patrón arquitectónico
