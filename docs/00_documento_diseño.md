@@ -85,6 +85,26 @@ Nps_surveys es un archivo formato CSV y no tiene una clave única propia, por lo
 Billing_monthly es un archivo formato CSV y su clave única es invoice_id y se conecta con customers_orgs a través de org_id.
 
 Usage_events_stream es un archivo formato JSONL y su clave única es event_id y se conecta con customers_orgs a través de org_id y con resources a través de resource_id.
+
+Riesgos identificados
+
+Riesgo 1 — Duplicados en usage_events_stream
+
+Usage_events_stream tiene un total de 43.200 filas donde el 50% son duplicadas (21.600 filas). Si no las eliminamos, los costos calculados serían el doble del valor real, lo que generaría decisiones incorrectas en FinOps. La mitigación es deduplicar por event_id en la capa Bronze, sin modificar los archivos originales de Landing.
+
+Riesgo 2 — Costos negativos en billing_monthly y usage_events_stream
+
+En billing_monthly encontramos un subtotal negativo de -1671.83. Estos valores no son errores, sino créditos reales del proveedor de nube, como devoluciones o ajustes por compromisos de uso. Si los eliminamos, el gasto neto mensual quedaría inflado y FinOps estaría tomando decisiones sobre números incorrectos. Por eso lo mantengo y lo marco como créditos.
+
+En usage_events_stream encontramos cost_usd_increment con valores hasta -154.46. Acá lo considero una anomalías por que un  recurso de nube no puede generar un consumo físico negativo.
+
+Riesgo 3 — Fechas guardadas como texto
+
+En todas las tablas las fechas están guardadas como texto (tipo object en pandas). Esto significa que no se pueden hacer cálculos de tiempo, ordenar cronológicamente ni filtrar por rango de fechas correctamente. La mitigación es castear todas las columnas de fecha al tipo timestamp o date en la capa Bronze.
+
+Riesgo 4 — nps_score fuera de rango en customers_orgs
+
+En customers_orgs encontre un nps_score con valor 101. El NPS válido va de -100 a 100, por lo que ese valor es imposible y distorsiona los promedios de satisfacción del cliente. Este registro se marca como outlier y se envía a quarantine.
 ## 4. Arquitectura de alto nivel
 
 ## 5. Patrón arquitectónico
