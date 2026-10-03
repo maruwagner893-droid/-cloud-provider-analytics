@@ -49,6 +49,44 @@ Resources, support_tickets, marketing_touches, nps_surveys para mi se crean de v
 Billing_monthly  es de manera fija pero mensual porque acá hay un patrón regular y predecible: se genera exactamente una vez por mes. Lo podemos ver  con el datos reales: 240 filas ÷ 80 organizaciones = 3 (una por cada uno de los 3 meses del dataset: junio, julio, agosto).
 
 usage_events_stream  es de forma "continua" porque a diferencia de todas las demás, esta no tiene pausas  y se genera todo el tiempo, las 24 horas, cada vez que alguien usa un servicio cloud. Por eso en solo 60 días ya acumuló 43.200 eventos.
+Vi el notebook completo. Te doy feedback estructurado:
+
+Lo que está bien ✅
+
+El approach es correcto: función estándar para cada tabla (shape, info, describe, nulos, duplicados, columna por columna). Cubre todas las tablas. Los hallazgos son reales y verificados con los datos.
+
+Un hallazgo importante que cambia el Riesgo de monedas
+
+Mirá el output de billing_monthly — tiene una columna exchange_rate_to_usd con valores como 0.00160 (ARS), 1.09929 (EUR), etc. Eso significa que los datos YA traen el tipo de cambio. El riesgo no es "imposible normalizar" — es que si alguien suma el subtotal sin multiplicar por exchange_rate_to_usd, los números van a estar mezclados. Cambiá el texto a algo así: "Las facturas vienen en USD, ARS y EUR. La tabla incluye exchange_rate_to_usd para convertir, pero si no se aplica en Bronze, las sumas de subtotal quedan en monedas distintas y son incorrectas."
+
+Un cell que deberías agregar
+
+Tu mejor hallazgo fue que los nulos de carbon_kg coinciden con schema_version = 1. Pero no hay código que lo verifique explícitamente. Agregá este cell después del análisis de usage_events:
+
+python
+# Verificar relación schema_version → nulls
+sv_null = df_data.groupby('schema_version')['carbon_kg'].apply(
+    lambda x: x.isnull().sum()
+)
+print("Nulos en carbon_kg por schema_version:")
+print(sv_null)
+
+Eso convierte una intuición en evidencia concreta — exactamente lo que el profesor va a buscar.
+
+Dos cosas que faltan en el documento
+
+Del notebook se ven dos cosas que todavía no están escritas:
+
+value en usage_events_stream es tipo object aunque debería ser numérico — eso impide hacer cálculos de consumo
+genai_tokens tiene 92.75% de nulos — eso no es un problema de calidad, es que solo los eventos de tipo AI lo registran
+
+¿Querés agregar ese cell de verificación ahora, o lo dejamos como evidencia para después y avanzamos al documento?
+
+pasame el texto corregido como te lo pase
+
+Las tablas presentan distintos niveles de calidad. Las más afectadas son Billing_monthly (57.08% de nulos en credits, más un subtotal negativo de -1671.83) y Usage_events_stream (nulos en value, unit, carbon_kg y genai_tokens, además de costos negativos). Le siguen Support_tickets (24% de nulos en resolved_at y 25.4% en csat), Nps_surveys (20.65% en nps_score y 10.87% en comment), Resources (20.75% en tags_json) y Users (17.38% en last_login). Customers_orgs tiene un nivel más bajo de nulos (13.75% en nps_score) pero suma un valor fuera de rango (101, cuando la escala NPS va de -100 a 100). Marketing_touches es la única tabla sin problemas de nulos.
+
+Además de los nulos, hay otros hallazgos relevantes: ninguna tabla tiene filas duplicadas; varias columnas de fecha (signup_date, created_at, resolved_at, last_login, survey_date, month, timestamp) están guardadas como texto en vez de datetime; la columna value de Usage_events_stream tiene tipo object en vez de numérico, lo que impide hacer cálculos de consumo; nps_score aparece en dos tablas distintas (Customers_orgs y Nps_surveys), lo que puede generar inconsistencias si los valores no están sincronizados; Billing_monthly registra facturas en USD, ARS y EUR — la tabla incluye la columna exchange_rate_to_usd para convertir, pero si no se aplica en la capa Bronze, las sumas de subtotal quedan en monedas distintas y resultan incorrectas; los nulos de carbon_kg y genai_tokens en Usage_events_stream coinciden con registros de un esquema anterior (schema_version = 1), lo que indica una evolución del esquema y no un error aleatorio; y csat usa una escala 0-7 poco habitual que conviene confirmar con la fuente.
 
 Las tablas tienen los siguientes problemas de calidad:
 
@@ -67,6 +105,25 @@ Nps_surveys: nulos en nps_score (20.65%) y comment (10.87%).
 Billing_monthly: nulos en credits (57.08%), y un subtotal negativo (-1671.83).
 
 Usage_events_stream: nulos en value, unit, carbon_kg y genai_tokens; además costos negativos.
+ este formato tengo agregale lo que falta
+
+Las tablas tienen los siguientes problemas de calidad:
+
+Customers_orgs: nulos en nps_score (13.75%), y un valor fuera de rango (101, cuando la escala NPS va de -100 a 100). La columna signup_date está guardada como texto en vez de datetime. Además, nps_score aparece también en Nps_surveys, lo que me puede generar inconsistencias si los valores no están sincronizados.
+
+Users: nulos en last_login (17.38%). Las columnas created_at y last_login están guardadas como texto en vez de datetime.
+
+Resources: nulos en tags_json (20.75%). La columna created_at está guardada como texto en vez de datetime.
+
+Support_tickets: nulos en resolved_at (24%) y csat (25.4%). Las columnas created_at y resolved_at están guardadas como texto. La columna csat usa una escala 0-7 lo que es  poco  habitual  y conviene confirmar con la fuente.
+
+Marketing_touches: No tiene problemas de nulos, per la columna timestamp está guardada como texto en vez de datetime.
+
+Nps_surveys: Tiene nulos en nps_score (20.65%) y comment (10.87%).Aparte la columna survey_date está guardada como texto en vez de datetime.
+
+Billing_monthly:  Tiene nulos en credits (57.08%), y un subtotal negativo (-1671.83). Las facturas vienen en tres monedas (USD, ARS y EUR); la tabla incluye exchange_rate_to_usd para convertir, pero si no se aplica en la capa Bronze las sumas quedan en monedas distintas y resultan incorrectas. La columna month está guardada como texto en vez de datetime.
+
+Usage_events_stream:  Tiene nulos en value (2.03%), unit (4.80%), carbon_kg (25%) y genai_tokens (92.75%); además costos negativos en cost_usd_increment. Los nulos de carbon_kg coinciden exactamente con los registros de schema_version = 1, lo que indica  quue no es un error aleatorio. La columna value tiene tipo object en vez de numérico, lo que impide cálculos de consumo. Ademas la columna timestamp está guardada como texto en vez de datetime.
 
 Trazabilidad:
 
