@@ -187,7 +187,7 @@ Luego para la capa de presentacion del cliente todos los datos  convergen en la 
 | Tipar campos y agregar metadatos de ingesta | PySpark | Bronze | Veracidad |
 | Limpiar nulos, joins y normalizar moneda | PySpark Batch | Silver | Veracidad |
 | Unificar schema v1/v2 | PySpark Streaming | Silver | Variedad |
-| Costos, revenue y anomalías por org y servicio | PySpark Batch | Gold | Valor |
+| Costos y facturación por organización y servicio | PySpark Batch | Gold | Valor |
 | Volumen de tickets, SLA y CSAT por org | PySpark Batch | Gold | Valor |
 | Uso, requests y genai_tokens por servicio | PySpark Batch | Gold | Valor |
 | Quarantine de registros inválidos | PySpark | Cuarentena | Veracidad |
