@@ -172,7 +172,7 @@ flowchart TD
 
 ## 5. Patrón arquitectónico
 
-Se eligió el patrón **Lambda** porque el proyecto tiene dos tipos de datos con necesidades distintas: la fuente `usage_events_stream` requiere procesamiento en tiempo real (streaming), mientras que `billing_monthly`, `support_tickets`, `customers_orgs`, `nps_surveys` y `marketing_touches` son datos periódicos que se procesan en lotes (batch). Kappa no aplica porque solo sigue un camino (streaming) y no es adecuado para datos maestros y periódicos. Ambos caminos convergen en la zona Gold, desde donde se cargan a Cassandra para su consumo.
+Se eligió el patrón **Lambda** porque el proyecto tiene dos tipos de datos con necesidades distintas: la fuente usage_events_stream requiere procesamiento en tiempo real (streaming), mientras que billing_monthly, support_tickets, customers_orgs,users, resources, nps_surveys y marketing_touches son datos periódicos que se procesan en lotes (batch). Kappa no aplica porque solo sigue un camino (streaming) y no es adecuado para datos maestros y periódicos. Ambos caminos convergen en la zona Gold, desde donde se cargan a Cassandra para su consumo.
 
 
 ## 6. Matriz requisito-componente
