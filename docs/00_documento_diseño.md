@@ -110,8 +110,70 @@ En todas las tablas las fechas están guardadas como texto (tipo object en panda
 En customers_orgs encontré un nps_score con valor 101. El NPS válido va de -100 a 100, por lo que ese valor es imposible y distorsiona los promedios de satisfacción del cliente. Este registro se marca como outlier y se envía a quarantine.
 
 ## 4. Arquitectura de alto nivel
+## 4. Arquitectura de alto nivel
+
+Los datos nacen como archivos en formato CSV y JSONL. Primero llegan a la zona de Landing sin modificarse. Después, usando PySpark, se procesan y llevan a Bronze, donde se les asigna el tipo de dato correcto y se agregan metadatos de ingesta. Luego pasan a Silver, donde se realiza la limpieza: se arreglan los nulos, se unen las tablas y se unifica el esquema v1/v2. En Gold se calculan las métricas finales (costos, tickets, uso) para cada dominio de negocio. Finalmente, los datos se cargan en Cassandra/AstraDB, donde los usuarios de FinOps, Soporte y Producto pueden consultarlos.
+
+```mermaid
+flowchart TD
+    subgraph SRC["📥 Fuentes de Datos"]
+        CSV["CSV\nclientes · tickets · billing\nNPS · marketing · usuarios"]
+        JSONL["JSONL\nusage_events_stream"]
+    end
+
+    subgraph LZ["🗄️ Landing Zone — Inmutable"]
+        RAW_B["CSV raw\nsin modificar"]
+        RAW_S["JSONL raw\nsin modificar"]
+    end
+
+    subgraph BATCH["🔄 Capa Batch — Patrón Lambda"]
+        BRZ_B["Bronze\nTipado · Parquet · Metadatos de ingesta"]
+        SLV_B["Silver\nLimpieza · Joins · Moneda normalizada\nEsquema v1/v2 unificado"]
+    end
+
+    subgraph STREAM["⚡ Capa Streaming — Patrón Lambda"]
+        BRZ_S["Bronze Stream\nIngesta JSONL · Parquet"]
+        SLV_S["Silver Stream\nFiltros · Idempotencia · Anomalías"]
+    end
+
+    subgraph GZ["🥇 Gold Zone — Métricas de Negocio"]
+        GLD["Costos por cliente · Tickets por severidad\nUso por servicio · NPS histórico"]
+    end
+
+    subgraph QUAR["⚠️ Cuarentena"]
+        Q["Registros inválidos\nnps_score out of range · negativos anómalos"]
+    end
+
+    subgraph SRV["🗃️ Serving Layer"]
+        CASS["Cassandra / AstraDB"]
+    end
+
+    subgraph USR["👥 Consumidores Finales"]
+        FO["FinOps"]
+        SP["Soporte"]
+        PR["Producto"]
+    end
+
+    CSV -->|Copia raw| RAW_B
+    JSONL -->|Copia raw| RAW_S
+    RAW_B -->|PySpark Batch| BRZ_B
+    RAW_S -->|PySpark Structured Streaming| BRZ_S
+    BRZ_B -->|PySpark| SLV_B
+    BRZ_S -->|PySpark| SLV_S
+    SLV_B -->|Registros inválidos| Q
+    SLV_S -->|Anomalías| Q
+    SLV_B -->|PySpark| GLD
+    SLV_S -->|PySpark| GLD
+    GLD -->|PySpark write| CASS
+    CASS --> FO
+    CASS --> SP
+    CASS --> PR
+```
 
 ## 5. Patrón arquitectónico
+
+Se eligió el patrón **Lambda** porque el proyecto tiene dos tipos de datos con necesidades distintas: la fuente `usage_events_stream` requiere procesamiento en tiempo real (streaming), mientras que `billing_monthly`, `support_tickets`, `customers_orgs`, `nps_surveys` y `marketing_touches` son datos periódicos que se procesan en lotes (batch). Kappa no aplica porque solo sigue un camino (streaming) y no es adecuado para datos maestros y periódicos. Ambos caminos convergen en la zona Gold, desde donde se cargan a Cassandra para su consumo.
+
 
 ## 6. Matriz requisito-componente
 
