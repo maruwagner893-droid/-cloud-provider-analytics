@@ -215,6 +215,23 @@ para que PySpark pueda leerlos sin la necesidad de consultar todo.
 
 ## 8. Flujo batch y streaming
 
+### 8.1 Flujo Batch:( Tablas en formato csv)
+
+1. Los datos nacen como archivos CSV: clientes, usuarios, recursos, tickets, billing, NPS y marketing.
+2. Esos archivos se copian tal cual a Landing, sin modificar nada.
+3. PySpark Batch los lee de Landing, les pone el tipo de dato correcto, agrega las columnas `ingest_ts` y `source_file`, y los guarda en Parquet en Bronze.
+4. PySpark toma lo de Bronze, lo lleva a Silver y ahí saca duplicados si las tablas lo tienen, arregla nulos, une tablas y normaliza la moneda a USD.
+5. Un tercer proceso calcula las métricas de negocio (costos, tickets, uso) y los guarda en Gold.
+6. Desde Gold, PySpark escribe los resultados en Cassandra/AstraDB.
+
+### 8.2 Flujo Streaming:( Datos en tiempo real)
+
+1. Los eventos de uso llegan continuamente como archivos JSONL.
+2. Se copian tal cual a Landing.
+3. PySpark Structured Streaming los lee en tiempo real, tipifica, agrega `ingest_ts` y `source_file`, y guarda en Parquet en Bronze Stream.
+4. El mismo proceso de Structured Streaming aplica filtros, checkpoint para no duplicar y detecta anomalías en Silver Stream.
+5. Desde Silver Stream converge con el camino batch en Gold.
+6. Desde Gold se escribe en Cassandra/AstraDB.
 ## 9. Flujo MapReduce de referencia
 
 ## 10. Supuestos y riesgos
