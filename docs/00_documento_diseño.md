@@ -117,7 +117,7 @@ Los datos nacen como archivos en formato CSV y JSONL. Primero llegan a la zona d
 ```mermaid
 flowchart TD
     subgraph SRC["📥 Fuentes de Datos"]
-        CSV["CSV\nclientes · tickets · billing\nNPS · marketing · usuarios"]
+        CSV["CSV\nclientes · usuarios · recursos · tickets\nbilling · NPS · marketing"]
         JSONL["JSONL\nusage_events_stream"]
     end
 
