@@ -110,7 +110,6 @@ En todas las tablas las fechas están guardadas como texto (tipo object en panda
 En customers_orgs encontré un nps_score con valor 101. El NPS válido va de -100 a 100, por lo que ese valor es imposible y distorsiona los promedios de satisfacción del cliente. Este registro se marca como outlier y se envía a quarantine.
 
 ## 4. Arquitectura de alto nivel
-## 4. Arquitectura de alto nivel
 
 Los datos nacen como archivos en formato CSV y JSONL. Primero llegan a la zona de Landing sin modificarse. Después, usando PySpark, se procesan y llevan a Bronze, donde se les asigna el tipo de dato correcto y se agregan metadatos de ingesta. Luego pasan a Silver, donde se realiza la limpieza: se arreglan los nulos, se unen las tablas y se unifica el esquema v1/v2. En Gold se calculan las métricas finales (costos, tickets, uso) para cada dominio de negocio. Finalmente, los datos se cargan en Cassandra/AstraDB, donde los usuarios de FinOps, Soporte y Producto pueden consultarlos.
 
