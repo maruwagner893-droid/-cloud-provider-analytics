@@ -172,6 +172,7 @@ flowchart TD
 ## 5. Patrón arquitectónico
 
 Se eligió el patrón Lambda porque es un modelo diseñado para procesar datos combinando dos capas: una capa de velocidad, que procesa datos en tiempo real (streaming), y una capa de lotes (batch), que procesa grandes volúmenes de datos en intervalos de tiempo predefinidos. El proyecto tiene  dos caminos de procesamiento: uno para datos que llegan periódicamente (batch) y otro para datos que llegan en tiempo real (streaming):donde la fuente usage_events_stream requiere procesamiento en tiempo real (streaming), mientras que billing_monthly, support_tickets, customers_orgs, users, resources, nps_surveys y marketing_touches son datos periódicos que se procesan en lotes (batch). En nuestra modelo de arquitectura que proponemos, ambas capas se construyen con PySpark: la capa de lotes mediante procesamiento batch estándar, y la capa de velocidad mediante Structured Streaming.
+
 Kappa no aplica porque solo utiliza procesamiento en tiempo real (streaming), con un único camino para todos los datos, y no es adecuado para datos maestros y periódicos como los que tiene este proyecto. 
 Luego para la capa de presentacion del cliente todos los datos  convergen en la zona Gold, desde donde se cargan a Cassandra para su consumo.
 
@@ -193,6 +194,24 @@ Luego para la capa de presentacion del cliente todos los datos  convergen en la 
 | Idempotencia / re-ejecución sin duplicados | PySpark Structured Streaming | Silver Stream | Veracidad |
 | Servir consultas por dominio | Cassandra/AstraDB | Serving | Valor |
 ## 7. Diseño del Data Lake
+
+El Data Lake se organiza en cuatro zonas progresivas.
+
+Landing guarda los datos como están, sin modificar. Bronze toma esos 
+datos y los tipifica, agrega columnas extra para saber cuándo y de dónde 
+vinieron, como por ejemplo ingest_ts y source_file. En Silver limpiamos 
+los datos: se sacan los duplicados si tienen, se arreglan los nulos. 
+Por último, en Gold se producen las métricas finales para que los usuarios 
+de FinOps, Soporte y Producto puedan consultarlas.
+
+Los archivos en Bronze, Silver y Gold se guardan en formato Parquet en 
+vez de CSV porque se guardan los datos por columnas y comprimidos. Si 
+PySpark necesita solo algunos de esos datos, lee solo la columna y no el 
+archivo completo. En el proyecto tenemos 43.000 eventos y múltiples tablas, 
+y con esto lo podemos hacer más rápido y que ocupe menos espacio.
+
+Dentro de cada zona los archivos se organizan por año, mes y organización 
+para que PySpark pueda leerlos sin la necesidad de consultar todo.
 
 ## 8. Flujo batch y streaming
 
