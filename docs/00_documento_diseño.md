@@ -179,6 +179,20 @@ Luego para la capa de presentacion del cliente todos los datos  convergen en la 
 
 ## 6. Matriz requisito-componente
 
+| Requisitos a tener en cuenta  | Herramienta que utiliza  | Zona que se encuentra  |justificación de la necesidad de Big Data: Volumen, velocidad, variedad, veracidad y valor |
+|---|---|---|---|
+| Ingestar 7 CSVs periódicamente | PySpark Batch | Bronze | Volumen, Variedad |
+| Ingestar JSONL en tiempo real | PySpark Structured Streaming | Bronze | Velocidad |
+| Preservar datos crudos sin modificar | Copia directa | Landing | Veracidad |
+| Tipar campos y agregar metadatos de ingesta | PySpark | Bronze | Veracidad |
+| Limpiar nulos, joins y normalizar moneda | PySpark Batch | Silver | Veracidad |
+| Unificar schema v1/v2 | PySpark Streaming | Silver | Variedad |
+| Costos, revenue y anomalías por org y servicio | PySpark Batch | Gold | Valor |
+| Volumen de tickets, SLA y CSAT por org | PySpark Batch | Gold | Valor |
+| Uso, requests y genai_tokens por servicio | PySpark Batch | Gold | Valor |
+| Quarantine de registros inválidos | PySpark | Cuarentena | Veracidad |
+| Idempotencia / re-ejecución sin duplicados | PySpark Structured Streaming | Silver Stream | Veracidad |
+| Servir consultas por dominio | Cassandra/AstraDB | Serving | Valor |
 ## 7. Diseño del Data Lake
 
 ## 8. Flujo batch y streaming
