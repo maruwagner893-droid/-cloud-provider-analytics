@@ -234,6 +234,17 @@ para que PySpark pueda leerlos sin la necesidad de consultar todo.
 6. Desde Gold se escribe en Cassandra/AstraDB.
 ## 9. Flujo MapReduce de referencia
 
+En la etapa Map, PySpark distribuye los registros de las fuentes de datos entre los nodos del cluster. Cada nodo procesa su parte y emite pares clave-valor, en nuestro proyecto tenemos los siguientes: 
+billing_monthly → (org_id, amount_usd)
+support_tickets → (org_id, 1)
+usage_events_stream → (org_id + service, tokens)
+En donde Cada nodo del cluster procesa una parte de esos archivos en paralelo
+
+ luego en Shuffle:PySpark redistribuye los pares por clave y todos los registros de la misma organización se juntan en el mismo nodo
+
+ Por ultimo en Reduce: PySpark agrega los valores agrupados y produce las métricas  y los  resultados se escriben en Gold y luego en Cassandra.
+
+
 ## 10. Supuestos y riesgos
 
 ## 11. Estimación preliminar
