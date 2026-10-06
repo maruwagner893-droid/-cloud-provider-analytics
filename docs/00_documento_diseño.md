@@ -1,9 +1,9 @@
 # Documento de diseño — Cloud Provider Analytics
 
 ## 1. Encuadre del problema
-Soy del equipo de ciencia de datos de un proveedor de nube. Los datos de nuestros clientes (uso de servicios, facturación, tickets de soporte, etc.) llegan crudos, con errores, nulos y formatos inconsistentes. Mi trabajo es limpiarlos, ordenarlos y transformarlos para que las tres áreas de la empresa —FinOps, Soporte y Producto— puedan usarlos sin complicaciones la  información  de forma clara, confiable y que sea fácil de consultar.
+Somos del equipo de ciencia de datos de un proveedor de nube. Los datos de nuestros clientes (uso de servicios, facturación, tickets de soporte, etc.) llegan crudos, con errores, nulos y formatos inconsistentes. nuestro trabajo es limpiarlos, ordenarlos y transformarlos para que las tres áreas de la empresa:FinOps, Soporte y Producto, puedan usarlos sin complicaciones la  información  de forma clara, confiable y que sea fácil de consultar.
 
-Hoy, mucha de esta información se arma de forma manual, lo que lleva tiempo y es propenso a errores. Con este proyecto busco que se pueda  automatizar ese proceso, combinando dos formas de entregar la información:
+Hoy, mucha de esta información se arma de forma manual, lo que lleva tiempo y es propenso a errores. Con este proyecto buscamos que se pueda  automatizar ese proceso, combinando dos formas de entregar la información:
 
 Un dashboard online, actualizado casi en tiempo real, para que el usuario pueda ver el día a día.
 Informes diarios y mensuales, para análisis más consolidados.
@@ -17,17 +17,17 @@ Tener la información disponible rápido y de forma confiable, tanto en el dashb
 "Aunque solo se tiene 80 organizaciones, cada una genera eventos de uso constantemente  y en 60 días ya se acumulo  43.200 registros solo de esa tabla. Sumado a los tickets (1000), usuarios (800) y recursos (400), cruzar toda esta información a mano o en Excel se vuelve inmanejable, más aún pensando que en producción real serían miles de organizaciones, no 80."
 
 ### Velocidad:
-"por que la tabla mas pequena es una tabla de refencia y la otra es de un historial o logeo" 
+"por que la tabla mas pequeña es una tabla de refencia y la otra es de un historial o logeo" 
 "customers_orgs es una tabla de referencia  donde cada organización se registra una vez y cambia muy poco con el tiempo (80 filas fijas). En cambio, usage_events_stream es un historial/log de eventos que se genera constantemente, cada vez que un cliente usa un servicio y por eso en solo 60 días ya  se acumula 43.200 registros. Esta diferencia de frecuencia es justamente lo que justifica usar Structured Streaming para los eventos.
 
 ### Variedad:
-"Tengo dos tipos de archivo: CSV y JSONL. Dentro de los archivos JSONL, según la versión  (schema_version), los eventos con versión 2 incluyen los campos carbon_kg y genai_tokens, mientras que los de versión 1 no los tienen (aparecen como nulos)."
+"Tenemos dos tipos de archivo: CSV y JSONL. Dentro de los archivos JSONL, según la versión  (schema_version), los eventos con versión 2 incluyen los campos carbon_kg y genai_tokens, mientras que los de versión 1 no los tienen (aparecen como nulos)."
 
 ### Veracidad:
 "Se encontro fechas guardadas con formata objet donde panda lo toma  como string (texto), varias tablas con nulos significativos como por ejemplo la columna carbon_kg tiene el 25% de valores nulos de un totla de 43.200 eventos valores fuera de rango cuando realice estudios preliminares en el estudio de calidad y tambien se encotraron costos negativos"
 
 ### Valor:
-"En este proyecto busco convertir datos crudos y con errores en información clara, confiable y fácil de consultar. Por ejemplo, FinOps hoy tiene datos con nulos y valores negativos raros mezclados con los reales; una vez que el pipeline los limpia y los separa, FinOps puede confiar en los números que ve y detectar rápidamente una anomalía real de costo, en vez de perder tiempo revisando si el dato está mal cargado o si es un problema genuino y para que el usuario tenga la informacion feaciente mas visible mas organizada."
+"En este proyecto buscamos convertir datos crudos y con errores en información clara, confiable y fácil de consultar. Por ejemplo, FinOps hoy tiene datos con nulos y valores negativos raros mezclados con los reales; una vez que el pipeline los limpia y los separa, FinOps puede confiar en los números que ve y detectar rápidamente una anomalía real de costo, en vez de perder tiempo revisando si el dato está mal cargado o si es un problema genuino y para que el usuario tenga la informacion feaciente mas visible mas organizada."
 ## 3. Inventario y perfil inicial de las fuentes: grano, frecuencia, tipos, calidad, trazabilidad y riesgos.
 
 ### Cardinalidad y Grano
@@ -47,7 +47,7 @@ Tener la información disponible rápido y de forma confiable, tanto en el dashb
 
 customers_orgs y users se crean una sola vez, porque una organización se registra una sola vez. Lo mismo con un usuario: se da de alta una vez.
 
-Resources, support_tickets, marketing_touches y nps_surveys se crean de vez en cuando porque considero que estos eventos pasan cuando algo puntual ocurre, sin un patrón fijo de tiempo. Un recurso se crea cuando el cliente decide desplegar algo nuevo, un ticket se abre cuando hay un problema, un touch de marketing pasa cuando el equipo decide hacer una campaña y las encuestas NPS se mandan esporádicamente, no en fechas fijas.
+Resources, support_tickets, marketing_touches y nps_surveys se crean de vez en cuando porque consideramos que estos eventos pasan cuando algo puntual ocurre, sin un patrón fijo de tiempo. Un recurso se crea cuando el cliente decide desplegar algo nuevo, un ticket se abre cuando hay un problema, un touch de marketing pasa cuando el equipo decide hacer una campaña y las encuestas NPS se mandan esporádicamente, no en fechas fijas.
 
 Billing_monthly es de manera fija pero mensual porque hay un patrón regular y predecible: se genera exactamente una vez por mes. Lo vemos con los datos reales: 240 filas ÷ 80 organizaciones = 3 (una por cada uno de los 3 meses del dataset: junio, julio, agosto).
 
@@ -97,9 +97,9 @@ Ninguna tabla presenta filas duplicadas.
 
 #### Riesgo 1: Costos negativos en billing_monthly y usage_events_stream
 
-En billing_monthly encontramos un subtotal negativo de -1671.83. Estos valores no son errores, sino créditos reales del proveedor de nube, como devoluciones o ajustes por compromisos de uso. Si los eliminamos, el gasto neto mensual quedaría inflado y FinOps estaría tomando decisiones sobre números incorrectos. Por eso los mantengo y los marco como créditos.
+En billing_monthly encontramos un subtotal negativo de -1671.83. Estos valores no son errores, sino créditos reales del proveedor de nube, como devoluciones o ajustes por compromisos de uso. Si los eliminamos, el gasto neto mensual quedaría inflado y FinOps estaría tomando decisiones sobre números incorrectos. Por eso los mantenemos y los marcamos como créditos.
 
-En usage_events_stream encontramos cost_usd_increment con valores hasta -154.46. Acá lo considero una anomalía porque un recurso de nube no puede generar un consumo físico negativo.
+En usage_events_stream encontramos cost_usd_increment con valores hasta -154.46. Acá lo consideramos una anomalía porque un recurso de nube no puede generar un consumo físico negativo.
 
 #### Riesgo 2: Fechas guardadas como texto
 
@@ -173,7 +173,7 @@ flowchart TD
 
 Se eligió el patrón Lambda porque es un modelo diseñado para procesar datos combinando dos capas: una capa de velocidad, que procesa datos en tiempo real (streaming), y una capa de lotes (batch), que procesa grandes volúmenes de datos en intervalos de tiempo predefinidos. El proyecto tiene  dos caminos de procesamiento: uno para datos que llegan periódicamente (batch) y otro para datos que llegan en tiempo real (streaming):donde la fuente usage_events_stream requiere procesamiento en tiempo real (streaming), mientras que billing_monthly, support_tickets, customers_orgs, users, resources, nps_surveys y marketing_touches son datos periódicos que se procesan en lotes (batch). En nuestra modelo de arquitectura que proponemos, ambas capas se construyen con PySpark: la capa de lotes mediante procesamiento batch estándar, y la capa de velocidad mediante Structured Streaming.
 
-Kappa no aplica porque solo utiliza procesamiento en tiempo real (streaming), con un único camino para todos los datos, y no es adecuado para datos maestros y periódicos como los que tiene este proyecto. 
+Ademas consideramos que Kappa no aplica porque solo utiliza procesamiento en tiempo real (streaming), con un único camino para todos los datos, y no es adecuado para datos maestros y periódicos como los que tiene este proyecto. 
 Luego para la capa de presentacion del cliente todos los datos  convergen en la zona Gold, desde donde se cargan a Cassandra para su consumo.
 
 
@@ -193,21 +193,22 @@ Luego para la capa de presentacion del cliente todos los datos  convergen en la 
 | Quarantine de registros inválidos | PySpark | Cuarentena | Veracidad |
 | Idempotencia / re-ejecución sin duplicados | PySpark Structured Streaming | Silver Stream | Veracidad |
 | Servir consultas por dominio | Cassandra/AstraDB | Serving | Valor |
+
 ## 7. Diseño del Data Lake
 
-El Data Lake se organiza en cuatro zonas progresivas.
+El Data Lake se organiza en cuatro zonas progresivas: Landing, Bronze, Silver y Gold
 
 Landing guarda los datos como están, sin modificar. Bronze toma esos 
 datos y los tipifica, agrega columnas extra para saber cuándo y de dónde 
-vinieron, como por ejemplo ingest_ts y source_file. En Silver limpiamos 
-los datos: se sacan los duplicados si tienen, se arreglan los nulos. 
+vinieron, como por ejemplo ingest_ts y source_file.
+En Silver limpiamos los datos: se sacan los duplicados si tienen, se arreglan los nulos. 
 Por último, en Gold se producen las métricas finales para que los usuarios 
 de FinOps, Soporte y Producto puedan consultarlas.
 
 Los archivos en Bronze, Silver y Gold se guardan en formato Parquet en 
 vez de CSV porque se guardan los datos por columnas y comprimidos. Si 
 PySpark necesita solo algunos de esos datos, lee solo la columna y no el 
-archivo completo. En el proyecto tenemos 43.000 eventos y múltiples tablas, 
+archivo completo. En el proyecto tenemos 43.200 eventos y múltiples tablas, 
 y con esto lo podemos hacer más rápido y que ocupe menos espacio.
 
 Dentro de cada zona los archivos se organizan por año, mes y organización 
