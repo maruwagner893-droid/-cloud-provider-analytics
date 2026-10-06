@@ -246,6 +246,7 @@ En donde Cada nodo del cluster procesa una parte de esos archivos en paralelo
 
 
 ## 10. Supuestos y riesgos
+### supuestos
 Se asume que los archivos CSV están disponibles antes de las 00:00hs para que se pueda leer la información del día anterior.
 
 Se asume que solamente tenemos dos versiones de schema (v1 y v2) y no va a haber una tercera versión; esta arquitectura solo sirve para estas dos versiones.
@@ -253,4 +254,11 @@ Se asume que solamente tenemos dos versiones de schema (v1 y v2) y no va a haber
 Se asume que el campo exchange_rate_to_usd existe en la tabla billing_monthly y es mayor a cero.
 
 Se asume que para poder unir con joins distintas tablas tenemos que tener un campo en común entre ellas, en este caso org_id.
+### Riesgos
+El diseño actual no contempla corregir datos en cuarentena, ya que se los separa para no contaminar; caso contrario los datos serían inconsistentes.
+
+El campo credits tiene un 57% de valores nulos y no está definido en Silver cómo tratarlos, lo que puede afectar los resultados en Gold siendo estos poco confiables.
+
+Si aparece una versión 3 del schema, se tendrá que volver a modificar las capas para poder limpiar y mostrar los datos, es decir que se tendría que tocar todo el proceso.
+
 ## 11. Estimación preliminar
