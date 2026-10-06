@@ -52,7 +52,7 @@ cloud-provider-analytics/
 - **Bronze:** almacenamiento de datos crudos.
 - **Silver:** datos limpios y estandarizados.
 - **Gold:** métricas y datasets de negocio.
-- **Quarantine:** registros rechazados por problemas de calidad.
+- **Quarantine:** registros invalidos por problemas de calidad.
 
 ## Tecnologías
 - Python
