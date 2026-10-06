@@ -53,10 +53,9 @@ La solución implementa una Arquitectura Lambda que combina:
 - Data Lake
  
 ## Áreas Beneficiadas
- FinOps
- Soporte
-Producto
-
+FinOps — costos y facturación
+Soporte — tickets e incidencias
+Producto — uso de servicios y features
 ## Documentación
 
 La documentación detallada de diseño se encuentra en:
