@@ -184,8 +184,8 @@ Luego para la capa de presentacion del cliente todos los datos  convergen en la 
 |---|---|---|---|
 | Ingestar  las tablas CSVs periódicamente | PySpark Batch | Bronze | Volumen, Variedad |
 | Ingestar JSONL en tiempo real | PySpark Structured Streaming | Bronze | Velocidad |
-| Preservar datos crudos sin modificar | Copia directa | Landing | Veracidad |
-| Tipar campos y agregar metadatos de ingesta | PySpark | Bronze | Veracidad |
+| conservar datos crudos sin modificar | Copia directa | Landing | Veracidad |
+| Clasificar los campos y agregar metadatos de ingesta | PySpark | Bronze | Veracidad |
 | Limpiar nulos, joins y normalizar moneda | PySpark Batch | Silver | Veracidad |
 | Unificar schema v1/v2 | PySpark Streaming |Silver Stream | Variedad |
 | Costos y facturación por organización y servicio | PySpark Batch | Gold | Valor |
