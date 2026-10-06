@@ -262,3 +262,26 @@ El campo credits tiene un 57% de valores nulos y no está definido en Silver có
 Si aparece una versión 3 del schema, se tendrá que volver a modificar las capas para poder limpiar y mostrar los datos, es decir que se tendría que tocar todo el proceso.
 
 ## 11. Estimación preliminar
+Esta sección tiene tres cosas: los roles del equipo, el tiempo estimado para cada tarea, y el esfuerzo total.
+### Roles
+Analista de negocio
+Data Engineer
+Data Analyst
+QA / Tester
+
+### Cronograma estimado del proyecto 
+
+Exploración de datos,  que estara a cargo del Data Analyst, con una duración estimada  de 4 días.
+
+Diseño de arquitectura, a cargo del Analista de negocio y el Data Engineer, con una duración estimada de 4 días.
+
+Desarrollo del pipeline batch, a cargo del Data Engineer, con una duración estimada de 2 semanas.
+
+Desarrollo del pipeline streaming, a cargo del Data Engineer, con una duración estimada de 2 semanas.
+
+Carga a Cassandra, a cargo del Data Engineer, con una duración estimada de 1 semana.
+
+Testing y QA, a cargo del QA / Tester, con una duración estimada de 1 semana.
+
+### Esfuerzo
+El esfuerzo total estimado es de aproximadamente 8 semanas.
