@@ -54,8 +54,11 @@ La solución implementa una Arquitectura Lambda que combina:
  
 ## Áreas Beneficiadas
 FinOps — costos y facturación
+
 Soporte — tickets e incidencias
+
 Producto — uso de servicios y features
+
 ## Documentación
 
 La documentación detallada de diseño se encuentra en:
