@@ -23,27 +23,29 @@ La solución implementa una Arquitectura Lambda que combina:
 - Capa de consumo para métricas y visualizaciones.
 
 ## Estructura del Repositorio
-- cloud-provider-analytics/
+
+```
+cloud-provider-analytics/
 │
 ├── data/
-│ ├── landing/
-│ ├── bronze/
-│ ├── silver/
-│ ├── gold/
-│ └── quarantine/
+│   ├── landing/
+│   ├── bronze/
+│   ├── silver/
+│   ├── gold/
+│   └── quarantine/
 │
 ├── docs/
-│ └── Documentación y diseño de la solución
+│   └── Documentación y diseño de la solución
 │
 ├── notebooks/
-│ └── Exploración y análisis de datos
+│   └── Exploración y análisis de datos
 │
 ├── src/
-│ └── Pipelines y transformaciones en PySpark
+│   └── Pipelines y transformaciones en PySpark
 │
 └── evidence/
-└── Evidencias, capturas y registro de decisiones
-
+    └── Evidencias, capturas y registro de decisiones
+```
 
 ## Data Lake
 - **Landing:** recepción inicial de datos.
