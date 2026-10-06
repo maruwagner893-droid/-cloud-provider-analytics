@@ -47,14 +47,13 @@ En este proyecto buscamos convertir datos crudos y con errores en información c
 
 ### Frecuencias
 
-customers_orgs y users se crean una sola vez, porque una organización se registra una sola vez. Lo mismo con un usuario: se da de alta una vez.
+customers_orgs y users se crean una sola vez, porque una organización se registra una sola vez. Lo mismo  ocurre con un usuario: se da de alta una vez.
 
-Resources, support_tickets, marketing_touches y nps_surveys se crean de vez en cuando porque consideramos que estos eventos pasan cuando algo puntual ocurre, sin un patrón fijo de tiempo. Un recurso se crea cuando el cliente decide desplegar algo nuevo, un ticket se abre cuando hay un problema, un touch de marketing pasa cuando el equipo decide hacer una campaña y las encuestas NPS se mandan esporádicamente, no en fechas fijas.
+Resources, support_tickets, marketing_touches y nps_surveys se crean de vez en cuando porque consideramos que estos eventos pasan cuando algo puntual ocurre, sin un patrón fijo de tiempo. Un recurso se crea cuando el cliente decide mostrar algo nuevo, un ticket se abre cuando hay un problema, un touch de marketing pasa cuando el equipo decide hacer una campaña y las encuestas NPS se mandan esporádicamente, no en fechas fijas.
 
-Billing_monthly es de manera fija pero mensual porque hay un patrón regular y predecible: se genera exactamente una vez por mes. Lo vemos con los datos reales: 240 filas ÷ 80 organizaciones = 3 (una por cada uno de los 3 meses del dataset: junio, julio, agosto).
+Billing_monthly ocurre de manera fija mensual porque hay un patrón regular y predecible: se genera exactamente una vez por mes. Lo vemos con los datos reales: 240 filas ÷ 80 organizaciones = 3 (una por cada uno de los 3 meses del dataset: junio, julio, agosto).
 
-usage_events_stream es de forma continua porque a diferencia de todas las demás, no tiene pausas y se genera todo el tiempo, las 24 horas, cada vez que alguien usa un servicio en la nube. Por eso en solo 60 días ya acumuló 43.200 eventos.
-
+usage_events_stream es de forma continua porque a diferencia de todas las demás, no tiene pausas y se genera todo el tiempo, las 24 horas, cada vez que alguien usa un servicio en la nube. 
 ### Calidad
 
 Las tablas tienen los siguientes problemas de calidad:
@@ -71,15 +70,15 @@ Las tablas tienen los siguientes problemas de calidad:
 
 **Nps_surveys:** nulos en nps_score (20.65%) y comment (10.87%). La columna survey_date está guardada como texto en vez de datetime.
 
-**Billing_monthly:** nulos en credits (57.08%), y un subtotal negativo (-1671.83). Las facturas vienen en tres monedas (USD, ARS y EUR); la tabla incluye exchange_rate_to_usd para convertir, pero si no se aplica en la capa Bronze las sumas quedan en monedas distintas y resultan incorrectas. La columna month está guardada como texto en vez de datetime.
+**Billing_monthly:** nulos en credits (57.08%), y un subtotal negativo (-1671.83). Las facturas vienen en tres monedas (USD, ARS y EUR); la tabla incluye exchange_rate_to_usd para convertirlas, pero si no se aplica en la capa Bronze las sumas quedan en monedas distintas y resultan incorrectas. La columna month está guardada como texto en vez de datetime.
 
 **Usage_events_stream:** nulos en value (2.03%), unit (4.80%), carbon_kg (25%) y genai_tokens (92.75%); además costos negativos en cost_usd_increment. Los nulos de carbon_kg coinciden exactamente con los registros de schema_version = 1, lo que indica una evolución del esquema y no un error aleatorio. La columna value tiene tipo object en vez de numérico, lo que impide cálculos de consumo. La columna timestamp está guardada como texto en vez de datetime.
 
-Ninguna tabla presenta filas duplicadas.
+Ninguna tabla muestran filas duplicadas.
 
 ### Trazabilidad
 
-**customers_orgs** es un archivo formato CSV y su clave única es org_id. Es la tabla central; por ende todas las demás tablas se conectan a ella por ese ID.
+**customers_orgs** es un archivo formato CSV y su clave única es org_id.Consideramos que es la tabla central; por ende todas las demás tablas se conectan a ella por ese ID.
 
 **users** es un archivo formato CSV y su clave única es user_id, y se conecta con customers_orgs a través de org_id.
 
@@ -89,7 +88,7 @@ Ninguna tabla presenta filas duplicadas.
 
 **marketing_touches** es un archivo formato CSV y su clave única es touch_id, y se conecta con customers_orgs a través de org_id.
 
-**nps_surveys** es un archivo formato CSV y no tiene una clave única propia, por lo que se identifica cada encuesta con la combinación de org_id + survey_date como clave compuesta, y se conecta con customers_orgs a través de org_id. Esto se debe a que si se usa solo org_id, la misma organización aparece varias veces y parecen datos repetidos; con survey_date, cada combinación es única y se puede identificar exactamente qué encuesta es.
+**nps_surveys** es un archivo formato CSV y no tiene una clave única propia, por lo que se identifica cada encuesta con la combinación de org_id + survey_date,como clave compuesta, y se conecta con customers_orgs a través de org_id. Esto se debe a que si se usa solo org_id, la misma organización aparece varias veces y parecen datos repetidos; con survey_date, cada combinación es única y se puede identificar exactamente qué encuesta pretenece.
 
 **billing_monthly** es un archivo formato CSV y su clave única es invoice_id, y se conecta con customers_orgs a través de org_id.
 
@@ -283,17 +282,17 @@ QA / Tester
 
 ### Cronograma estimado del proyecto 
 
-Exploración de datos,  que estara a cargo del Data Analyst, con una duración estimada  de 4 días.
+- En priemera instancia tenemos la exploración de datos,  que estara a cargo del Data Analyst, con una duración estimada  de 4 días.
 
-Diseño de arquitectura, a cargo del Analista de negocio y el Data Engineer, con una duración estimada de 4 días.
+- Diseño de arquitectura, a cargo del Analista de negocio y el Data Engineer, con una duración estimada de 4 días.
 
-Desarrollo del pipeline batch, a cargo del Data Engineer, con una duración estimada de 2 semanas.
+- Desarrollo del pipeline batch, a cargo del Data Engineer, con una duración estimada de 2 semanas.
 
-Desarrollo del pipeline streaming, a cargo del Data Engineer, con una duración estimada de 2 semanas.
+- Desarrollo del pipeline streaming, a cargo del Data Engineer, con una duración estimada de 2 semanas.
 
-Carga a Cassandra, a cargo del Data Engineer, con una duración estimada de 1 semana.
+- Se carga en Cassandra, a cargo del Data Engineer, con una duración estimada de 1 semana.
 
-Testing y QA, a cargo del QA / Tester, con una duración estimada de 1 semana.
+- Testing y QA, a cargo del QA / Tester, con una duración estimada de 1 semana.
 
 ### Esfuerzo
 El esfuerzo total estimado es de aproximadamente 8 semanas.
