@@ -30,11 +30,27 @@ La solución implementa una Arquitectura Lambda que combina:
  
 ## Estructura del Repositorio
  
-- `data/` — Las cinco zonas del Data Lake (landing, bronze, silver, gold, quarantine).
-- `docs/` — Documento de diseño del proyecto.
-- `notebooks/` — Scripts de exploración y análisis de datos.
-- `src/` — Código fuente de los pipelines PySpark.
-- `evidence/` — Capturas, resultados y registro de decisiones.
+```text
+cloud-provider-analytics/
+│
+├── data/
+│ ├── landing/
+│ ├── bronze/
+│ ├── silver/
+│ ├── gold/
+│ └── quarantine/
+│
+├── docs/
+│ └── Documentación y diseño de la solución
+│
+├── notebooks/
+│ └── Exploración y análisis de datos
+│
+├── src/
+│ └── Pipelines y transformaciones en PySpark
+│
+└── evidence/
+└── Evidencias, capturas y registro de decisiones
  
 ## Data Lake
  
@@ -42,7 +58,7 @@ La solución implementa una Arquitectura Lambda que combina:
 - **Bronze:** almacenamiento de datos crudos.
 - **Silver:** datos limpios y estandarizados.
 - **Gold:** métricas y datasets de negocio.
-- **Quarantine:** registros rechazados por problemas de calidad.
+- **Quarantine:** registros invalidos por problemas de calidad.
  
 ## Tecnologías
  
