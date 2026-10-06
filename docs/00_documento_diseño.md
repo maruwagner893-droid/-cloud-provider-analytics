@@ -74,7 +74,7 @@ Las tablas tienen los siguientes problemas de calidad:
 
 **Usage_events_stream:** nulos en value (2.03%), unit (4.80%), carbon_kg (25%) y genai_tokens (92.75%); además costos negativos en cost_usd_increment. Los nulos de carbon_kg coinciden exactamente con los registros de schema_version = 1, lo que indica una evolución del esquema y no un error aleatorio. La columna value tiene tipo object en vez de numérico, lo que impide cálculos de consumo. La columna timestamp está guardada como texto en vez de datetime.
 
-Ninguna tabla muestran filas duplicadas.
+Ninguna tabla muestra filas duplicadas.
 
 ### Trazabilidad
 
@@ -235,7 +235,7 @@ para que PySpark pueda leerlos sin la necesidad de consultar todo.
 6. Desde Gold se escribe en Cassandra/AstraDB.
 ## 9. Flujo MapReduce de referencia
 
-En la etapa Map, PySpark distribuye los registros de las fuentes de datos entre los nodos del cluster. Cada nodo procesa su parte y emite pares clave-valor, en nuestro proyecto tenemos los siguientes: 
+En la etapa Map, PySpark distribuye los registros de las fuentes de datos entre los nodos del cluster. Cada nodo procesa su parte y emite pares clave-valor, en el proyecto se tienen los siguientes casos: 
 billing_monthly → (org_id, subtotal × exchange_rate_to_usd)
 support_tickets → (org_id, 1)
 usage_events_stream → (org_id + service, genai_tokens)
@@ -282,7 +282,7 @@ QA / Tester
 
 ### Cronograma estimado del proyecto 
 
-- En priemera instancia tenemos la exploración de datos,  que estara a cargo del Data Analyst, con una duración estimada  de 4 días.
+- En primera instancia tenemos la exploración de datos,  que estara a cargo del Data Analyst, con una duración estimada  de 4 días.
 
 - Diseño de arquitectura, a cargo del Analista de negocio y el Data Engineer, con una duración estimada de 4 días.
 
