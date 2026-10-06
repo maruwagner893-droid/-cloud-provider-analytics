@@ -195,8 +195,7 @@ Luego para la capa de presentacion del cliente todos los datos  convergen en la 
 | Servir consultas por dominio | Cassandra/AstraDB | Serving | Valor |
 
 ## 7. Diseño del Data Lake
-
-El Data Lake se organiza en cuatro zonas progresivas: Landing, Bronze, Silver y Gold
+El Data Lake se organiza en cinco zonas: Landing, Bronze, Silver y Gold como zonas progresivas, y Quarantine para los registros inválidos.
 
 Landing guarda los datos como están, sin modificar. Bronze toma esos 
 datos y los tipifica, agrega columnas extra para saber cuándo y de dónde 
@@ -248,13 +247,13 @@ En donde Cada nodo del cluster procesa una parte de esos archivos en paralelo
 
 ## 10. Supuestos y riesgos
 ### supuestos
-Se asume que los archivos CSV están disponibles antes de las 00:00hs para que se pueda leer la información del día anterior.
 
 Se asume que solamente tenemos dos versiones de schema (v1 y v2) y no va a haber una tercera versión; esta arquitectura solo sirve para estas dos versiones.
 
 Se asume que el campo exchange_rate_to_usd existe en la tabla billing_monthly y es mayor a cero.
 
 Se asume que para poder unir con joins distintas tablas tenemos que tener un campo en común entre ellas, en este caso org_id.
+
 ### Riesgos
 El diseño actual no contempla corregir datos en cuarentena, ya que se los separa para no contaminar; caso contrario los datos serían inconsistentes.
 
@@ -262,9 +261,19 @@ El campo credits tiene un 57% de valores nulos y no está definido en Silver có
 
 Si aparece una versión 3 del schema, se tendrá que volver a modificar las capas para poder limpiar y mostrar los datos, es decir que se tendría que tocar todo el proceso.
 
+## Mitigación de los Riesgos
+
+Para el riesgo 1 tomamos que  la mitigación típica es generar un reporte o log con los registros rechazados, para que alguien del equipo pueda revisarlos manualmente y decidir si corregirlos o descartarlos definitivamente.
+
+Riesgo 2 con  credits con 57% de nulos la mitigación  considerada es definir una regla en Silver: si credits es nulo, tratarlo como 0. Así Gold siempre tiene un número válido para calcular.
+
+Como mitigación del riesgo 3, se podría agregar una capa que funcione como interfaz común a todas las versiones, de forma que al aparecer una nueva versión solo sea necesario modificar esa capa y no todo el proceso.
+
 ## 11. Estimación preliminar
 Esta sección tiene tres cosas: los roles del equipo, el tiempo estimado para cada tarea, y el esfuerzo total.
+
 ### Roles
+
 Analista de negocio
 Data Engineer
 Data Analyst
