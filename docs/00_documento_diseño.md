@@ -186,10 +186,10 @@ Luego para la capa de presentacion del cliente todos los datos  convergen en la 
 | Preservar datos crudos sin modificar | Copia directa | Landing | Veracidad |
 | Tipar campos y agregar metadatos de ingesta | PySpark | Bronze | Veracidad |
 | Limpiar nulos, joins y normalizar moneda | PySpark Batch | Silver | Veracidad |
-| Unificar schema v1/v2 | PySpark Streaming | Silver | Variedad |
+| Unificar schema v1/v2 | PySpark Streaming |Silver Stream | Variedad |
 | Costos y facturación por organización y servicio | PySpark Batch | Gold | Valor |
 | Volumen de tickets, SLA y CSAT por org | PySpark Batch | Gold | Valor |
-| Uso, requests y genai_tokens por servicio | PySpark Batch | Gold | Valor |
+| Uso, requests y genai_tokens por servicio | PySpark Structured Streaming | Gold | Valor |
 | Quarantine de registros inválidos | PySpark | Cuarentena | Veracidad |
 | Idempotencia / re-ejecución sin duplicados | PySpark Structured Streaming | Silver Stream | Veracidad |
 | Servir consultas por dominio | Cassandra/AstraDB | Serving | Valor |
@@ -235,9 +235,9 @@ para que PySpark pueda leerlos sin la necesidad de consultar todo.
 ## 9. Flujo MapReduce de referencia
 
 En la etapa Map, PySpark distribuye los registros de las fuentes de datos entre los nodos del cluster. Cada nodo procesa su parte y emite pares clave-valor, en nuestro proyecto tenemos los siguientes: 
-billing_monthly → (org_id, amount_usd)
+billing_monthly →  → (org_id, subtotal × exchange_rate_to_usd)
 support_tickets → (org_id, 1)
-usage_events_stream → (org_id + service, tokens)
+usage_events_stream → (org_id + service, genai_tokens)
 En donde Cada nodo del cluster procesa una parte de esos archivos en paralelo
 
  luego en Shuffle:PySpark redistribuye los pares por clave y todos los registros de la misma organización se juntan en el mismo nodo
