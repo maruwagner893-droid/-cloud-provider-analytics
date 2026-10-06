@@ -58,7 +58,7 @@ La solución implementa una Arquitectura Lambda que combina:
 Producto
 
 ## Documentación
- 
+
 La documentación detallada de diseño se encuentra en:
  
 `docs/`
