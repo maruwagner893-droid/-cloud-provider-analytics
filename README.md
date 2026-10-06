@@ -62,9 +62,9 @@ cloud-provider-analytics/
 - Data Lake
 
 ## Áreas Beneficiadas
--FinOps (Financial Operations): controla y optimiza los costos del uso de la nube.
--Soporte: gestiona los tickets de soporte de los clientes. 
--Producto: analiza cómo los clientes usan los servicios (qué recursos usan, cuánto, con qué frecuencia). También ve métricas de NPS (satisfacción del cliente).
+- FinOps (Financial Operations): controla y optimiza los costos del uso de la nube.
+- Soporte: gestiona los tickets de soporte de los clientes. 
+- Producto: analiza cómo los clientes usan los servicios (qué recursos usan, cuánto, con qué frecuencia). También ve métricas de NPS (satisfacción del cliente).
 
 ## Documentación
 La documentación detallada de diseño se encuentra en: `docs/`
