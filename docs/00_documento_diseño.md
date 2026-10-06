@@ -10,7 +10,7 @@ Informes diarios y mensuales, para análisis más consolidados.
 Como objetivos concretos para saber si esto funcionó:
 Reducir el tiempo que hoy toma armar estos informes a mano, comparado con el tiempo que tarda una vez automatizado.
 Reducir los errores que hoy aparecen en los informes, gracias a las reglas de calidad del pipeline.
-Tener la información disponible rápido y de forma clara y confiable, tanto en el dashboard como en los reportes periódicos.
+Tener la información disponible rápida y lista para usarla, tanto en el dashboard como en los reportes periódicos.
 
 ## 2. Justificación de la necesidad de Big Data mediante volumen, velocidad, variedad, veracidad y valor
 ### Volumen:
@@ -28,7 +28,7 @@ Tenemos dos tipos de archivo: CSV y JSONL. Dentro de los archivos JSONL, según 
 Se encontró fechas guardadas con formata objet donde panda lo toma  como string (texto),  aparte tenemos varias tablas con nulos significativos como por ejemplo la columna carbon_kg tiene el 25% de valores nulos de un totla de 43.200 eventos y con  valores fuera de rango cuando realice s el estudio de calidad de los datos y tambien se encontraron costos negativos.
 
 ### Valor:
-En este proyecto buscamos convertir datos crudos y con errores en información clara, confiable y fácil de consultar. Por ejemplo, FinOps hoy tiene datos con nulos y valores negativos raros mezclados con los reales; una vez que el pipeline los limpia y los separa, FinOps puede confiar en los números que ve y detectar rápidamente ese problema real de costo, en vez de perder tiempo revisando si el dato está mal cargado o si es un problema genuino y para que el usuario tenga la informacion feaciente mas visible mas organizada.
+En este proyecto buscamos convertir datos crudos y con errores en información clara y  con numeros en los que se puedan confiar para poder consultar. Por ejemplo, FinOps hoy tiene datos con nulos y valores negativos raros mezclados con los reales; una vez que el pipeline los limpia y los separa, FinOps puede confiar en los números que ve y detectar rápidamente ese problema real de costo, en vez de perder tiempo revisando si el dato está mal cargado o si es un problema genuino y para que el usuario tenga la informacion feaciente mas visible mas organizada.
 
 ## 3. Inventario y perfil inicial de las fuentes: grano, frecuencia, tipos, calidad, trazabilidad y riesgos.
 
@@ -112,7 +112,7 @@ En customers_orgs encontré un nps_score con valor 101. El NPS válido va de -10
 
 ## 4. Arquitectura de alto nivel
 
-Los datos nacen como archivos en formato CSV y JSONL. Primero llegan a la zona de Landing sin modificarse. Después, usando PySpark, se procesan y llevan a Bronze, donde se les asigna el tipo de dato correcto y se agregan metadatos de ingesta. Luego pasan a Silver, donde se realiza la limpieza: se arreglan los nulos, se unen las tablas y se unifica el esquema v1/v2. En Gold se calculan las métricas finales (costos, tickets, uso) para cada dominio de negocio. Finalmente, los datos se cargan en Cassandra/AstraDB, donde los usuarios de FinOps, Soporte y Producto pueden consultarlos.
+Los datos nacen como archivos en formato CSV y JSONL. Primero llegan a la zona de Landing sin modificarse. Después, usando PySpark, se procesan y llevan a Bronze, donde se les asigna el tipo de dato correcto y se agregan metadatos de ingesta. Luego pasan a Silver, donde se realiza la limpieza: se arreglan los nulos, se unen las tablas y se unifica el esquema v1/v2. En Gold se calculan las métricas finales (costos, tickets, uso) para cada dominio de negocio. Finalmente, los datos se cargan en Cassandra/AstraDB, donde los usuarios de las tres áreas de negocios pueden consultarlos.
 
 ```mermaid
 flowchart TD
@@ -267,7 +267,7 @@ Si aparece una versión 3 del schema, se tendrá que volver a modificar las capa
 
 Para el riesgo 1 tomamos que  la mitigación habitual es generar un reporte o log con los registros rechazados, para que alguien del equipo pueda revisarlos manualmente y decidir si corregirlos o descartarlos definitivamente.
 
-Riesgo 2 con  credits con el 57% de nulos, la mitigación  considerada es definir una regla en Silver: si credits es nulo, tratarlo como 0. Así Gold siempre tiene un número válido para calcular.
+Para el riesgo  de credits con el 57% de nulos, la mitigación  considerada es definir una regla en Silver: si credits es nulo, tratarlo como 0. Así Gold siempre tiene un número válido para calcular, pero antes habría que confirmar con el área de FinOps si eso tiene sentido de negocio antes de de poder aplicarlo.
 
 Como mitigación del riesgo 3, se podría agregar una capa que funcione como interfaz común a todas las versiones, de forma que al aparecer una nueva versión solo sea necesario modificar esa capa y no todo el proceso.
 
