@@ -20,7 +20,7 @@ Los objetivos específicos son:
 La solución implementa una Arquitectura Lambda que combina:
 - Procesamiento Batch para información histórica.
 - Procesamiento Streaming para eventos en tiempo real.
-- Capa de consumo para métricas y visualizaciones.
+- Capa de consumo(Cassandra/AstraDB) para métricas y visualizaciones.
 
 ## Estructura del Repositorio
 
@@ -60,6 +60,7 @@ cloud-provider-analytics/
 - Apache Spark
 - Arquitectura Lambda
 - Data Lake
+- Cassandra/AstraDB, que es la capa de Serving
 
 ## Áreas Beneficiadas
 - FinOps (Financial Operations): controla y optimiza los costos del uso de la nube.
