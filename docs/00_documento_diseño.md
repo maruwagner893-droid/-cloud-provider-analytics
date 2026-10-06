@@ -246,13 +246,13 @@ En donde Cada nodo del cluster procesa una parte de esos archivos en paralelo
 
 
 ## 10. Supuestos y riesgos
-### supuestos
+### Supuestos
 
-Se asume que solamente tenemos dos versiones de schema (v1 y v2) y no va a haber una tercera versión; esta arquitectura solo sirve para estas dos versiones.
+Se asume que solamente existen dos versiones de schema (v1 y v2) y no habra una tercera versión; esta arquitectura solo sirve para estas dos versiones.
 
 Se asume que el campo exchange_rate_to_usd existe en la tabla billing_monthly y es mayor a cero.
 
-Se asume que para poder unir con joins distintas tablas tenemos que tener un campo en común entre ellas, en este caso org_id.
+Se asume que para poder unir con joins distintas tablas es necesario tener un campo en común entre ellas, en este caso org_id.
 
 ### Riesgos
 El diseño actual no contempla corregir datos en cuarentena, ya que se los separa para no contaminar; caso contrario los datos serían inconsistentes.
