@@ -51,4 +51,59 @@ cloud-provider-analytics/
 │
 └── evidence/
 └── Evidencias, capturas y registro de decisiones
- 
+
+
+cloud-provider-analytics/
+│
+├── data/
+│ ├── landing/
+│ ├── bronze/
+│ ├── silver/
+│ ├── gold/
+│ └── quarantine/
+│
+├── docs/
+│ └── Documentación y diseño de la solución
+│
+├── notebooks/
+│ └── Exploración y análisis de datos
+│
+├── src/
+│ └── Pipelines y transformaciones en PySpark
+│
+└── evidence/
+└── Evidencias, capturas y registro de decisiones
+ 
+
+## Data Lake
+
+**Landing:** recepción inicial de datos.
+**Bronze:** almacenamiento de datos crudos.
+**Silver:** datos limpios y estandarizados.
+**Gold:** métricas y datasets de negocio.
+**Quarantine:** registros rechazados por problemas de calidad.
+
+## Tecnologías
+
+Python
+PySpark
+Apache Spark
+Arquitectura Lambda
+Data Lake
+
+## Áreas Beneficiadas
+FinOps
+Soporte
+Producto
+
+## Documentación
+
+La documentación detallada de diseño se encuentra en:
+
+docs/
+
+## Evidencias
+
+Capturas de pantalla, validaciones y decisiones tomadas durante el desarrollo:
+
+evidence/
