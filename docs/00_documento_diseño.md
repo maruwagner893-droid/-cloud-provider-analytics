@@ -219,7 +219,7 @@ para que PySpark pueda leerlos sin la necesidad de consultar todo.
 ### 8.1 Flujo Batch (Tablas en formato CSV)
 
 1. Los datos nacen como archivos CSV: clientes, usuarios, recursos, tickets, billing, NPS y marketing.
-2. Esos archivos se copian tal cual a Landing, sin modificar nada.
+2. Esos archivos se copian tal cual a Landing, sin modificarse nada.
 3. PySpark Batch los lee de Landing, les pone el tipo de dato correcto, agrega las columnas `ingest_ts` y `source_file`, y los guarda en Parquet en Bronze.
 4. PySpark toma lo de Bronze, lo lleva a Silver y ahí saca duplicados si las tablas lo tienen, arregla nulos, une tablas y normaliza la moneda a USD. Los registros inválidos se envían a Cuarentena.
 5. PySpark toma lo de Silver, calcula las métricas de negocio y las guarda en Gold.
