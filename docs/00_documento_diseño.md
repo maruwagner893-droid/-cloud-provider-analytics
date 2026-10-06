@@ -235,7 +235,7 @@ para que PySpark pueda leerlos sin la necesidad de consultar todo.
 ## 9. Flujo MapReduce de referencia
 
 En la etapa Map, PySpark distribuye los registros de las fuentes de datos entre los nodos del cluster. Cada nodo procesa su parte y emite pares clave-valor, en nuestro proyecto tenemos los siguientes: 
-billing_monthly →  → (org_id, subtotal × exchange_rate_to_usd)
+billing_monthly → (org_id, subtotal × exchange_rate_to_usd)
 support_tickets → (org_id, 1)
 usage_events_stream → (org_id + service, genai_tokens)
 En donde Cada nodo del cluster procesa una parte de esos archivos en paralelo
