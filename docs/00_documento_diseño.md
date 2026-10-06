@@ -246,5 +246,11 @@ En donde Cada nodo del cluster procesa una parte de esos archivos en paralelo
 
 
 ## 10. Supuestos y riesgos
+Se asume que los archivos CSV están disponibles antes de las 00:00hs para que se pueda leer la información del día anterior.
 
+Se asume que solamente tenemos dos versiones de schema (v1 y v2) y no va a haber una tercera versión; esta arquitectura solo sirve para estas dos versiones.
+
+Se asume que el campo exchange_rate_to_usd existe en la tabla billing_monthly y es mayor a cero.
+
+Se asume que para poder unir con joins distintas tablas tenemos que tener un campo en común entre ellas, en este caso org_id.
 ## 11. Estimación preliminar
