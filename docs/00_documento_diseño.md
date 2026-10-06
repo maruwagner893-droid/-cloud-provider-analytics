@@ -192,13 +192,13 @@ Luego para la capa de presentacion del cliente todos los datos  convergen en la 
 | Volumen de tickets, SLA y CSAT por org | PySpark Batch | Gold | Valor |
 | Uso, requests y genai_tokens por servicio | PySpark Structured Streaming | Gold | Valor |
 | Quarantine de registros inválidos | PySpark | Cuarentena | Veracidad |
-| Idempotencia / re-ejecución sin duplicados | PySpark Structured Streaming | Silver Stream | Veracidad |
-| Servir consultas por dominio | Cassandra/AstraDB | Serving | Valor |
+| re-ejecución sin duplicados | PySpark Structured Streaming | Silver Stream | Veracidad |
+| disponiblizar consultas por dominio | Cassandra/AstraDB | Serving Layer | Valor |
 
 ## 7. Diseño del Data Lake
 El Data Lake se organiza en cinco zonas: Landing, Bronze, Silver y Gold como zonas progresivas, y Quarantine para los registros inválidos.
 
-Landing guarda los datos como están, sin modificar. Bronze toma esos 
+En landing se guardan los datos como están, sin modificarse. Bronze toma esos 
 datos y los tipifica, agrega columnas extra para saber cuándo y de dónde 
 vinieron, como por ejemplo ingest_ts y source_file.
 En Silver limpiamos los datos: se sacan los duplicados si tienen, se arreglan los nulos. 
@@ -233,9 +233,10 @@ para que PySpark pueda leerlos sin la necesidad de consultar todo.
 4. El mismo proceso de Structured Streaming aplica filtros, checkpoint para no duplicar y detecta anomalías en Silver Stream. Las anomalías se envían a Cuarentena.
 5. Desde Silver Stream converge con el camino batch en Gold.
 6. Desde Gold se escribe en Cassandra/AstraDB.
+7. 
 ## 9. Flujo MapReduce de referencia
 
-En la etapa Map, PySpark distribuye los registros de las fuentes de datos entre los nodos del cluster. Cada nodo procesa su parte y emite pares clave-valor, en el proyecto se tienen los siguientes casos: 
+En la etapa Map, PySpark distribuye los registros de las fuentes de datos entre los nodos del cluster. Cada nodo procesa su parte y formula los pares clave-valor, en el proyecto se tienen los siguientes casos: 
 billing_monthly → (org_id, subtotal × exchange_rate_to_usd)
 support_tickets → (org_id, 1)
 usage_events_stream → (org_id + service, genai_tokens)
@@ -264,9 +265,9 @@ Si aparece una versión 3 del schema, se tendrá que volver a modificar las capa
 
 ## Mitigación de los Riesgos
 
-Para el riesgo 1 tomamos que  la mitigación típica es generar un reporte o log con los registros rechazados, para que alguien del equipo pueda revisarlos manualmente y decidir si corregirlos o descartarlos definitivamente.
+Para el riesgo 1 tomamos que  la mitigación habitual es generar un reporte o log con los registros rechazados, para que alguien del equipo pueda revisarlos manualmente y decidir si corregirlos o descartarlos definitivamente.
 
-Riesgo 2 con  credits con 57% de nulos la mitigación  considerada es definir una regla en Silver: si credits es nulo, tratarlo como 0. Así Gold siempre tiene un número válido para calcular.
+Riesgo 2 con  credits con el 57% de nulos, la mitigación  considerada es definir una regla en Silver: si credits es nulo, tratarlo como 0. Así Gold siempre tiene un número válido para calcular.
 
 Como mitigación del riesgo 3, se podría agregar una capa que funcione como interfaz común a todas las versiones, de forma que al aparecer una nueva versión solo sea necesario modificar esa capa y no todo el proceso.
 
@@ -295,4 +296,4 @@ QA / Tester
 - Testing y QA, a cargo del QA / Tester, con una duración estimada de 1 semana.
 
 ### Esfuerzo
-El esfuerzo total estimado es de aproximadamente 8 semanas.
+El esfuerzo total estimado para este proyecto es de aproximadamente 8 semanas.
