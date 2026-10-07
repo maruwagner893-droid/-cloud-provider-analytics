@@ -277,8 +277,11 @@ Esta sección tiene tres cosas: los roles del equipo, el tiempo estimado para ca
 ### Roles
 
 Analista de negocio
+
 Data Engineer
+
 Data Analyst
+
 QA / Tester
 
 ### Cronograma estimado del proyecto 
