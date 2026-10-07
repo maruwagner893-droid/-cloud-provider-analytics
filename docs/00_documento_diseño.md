@@ -297,3 +297,15 @@ QA / Tester
 
 ### Esfuerzo
 El esfuerzo total estimado para este proyecto es de aproximadamente 8 semanas.
+
+### Próximos pasos a seguir
+
+Los siguientes pasos a tomar para la segunda etapa es avanzar sobre la implementación concreta del pipeline diseñado en esta primera instancia del proyecto, siguiendo el flujo definido ya en la arquitectura:
+
+ pipeline batch: donde se cargan los 7 archivos CSV hacia Landing Zone, para procesarlos con PySpark y se genera la capa Bronze en formato Parquet con metadatos de carga, y así poder aplicar las transformaciones de limpieza, joins y normalización de moneda en Silver.
+
+Pipeline streaming:  se configura PySpark Structured Streaming para la ingesta continua de los archivos JSONL, para  garantizar un re-procesamiento seguro mediante checkpoints y aplicando los filtros de calidad definidos en Silver Stream.
+
+construir la capa Gold: se generan las métricas de negocio a partir de los datos ya procesados en Silver Batch y Silver Stream, incluyendo los costos por organización, volumen de tickets y uso de servicios, etc.
+
+Cargar en Cassandra/AstraDB y se valida el pipeline: se escriben los datasets de Gold en la base de datos y se verifica que las tres areas (FinOps, Soporte y Producto) pueden consultar sus métricas correctamente.
