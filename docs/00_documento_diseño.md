@@ -311,4 +311,4 @@ Pipeline streaming:  se configura PySpark Structured Streaming para la ingesta c
 
 construir la capa Gold: se generan las métricas de negocio a partir de los datos ya procesados en Silver Batch y Silver Stream, incluyendo los costos por organización, volumen de tickets y uso de servicios, etc.
 
-Cargar en Cassandra/AstraDB y se valida el pipeline: se escriben los datasets de Gold en la base de datos y se verifica que las tres areas (FinOps, Soporte y Producto) pueden consultar sus métricas correctamente.
+Carga en Cassandra/AstraDB y validacion del pipeline: se vuelcan los datasets de Gold en la base de datos y se verifica que las tres areas (FinOps, Soporte y Producto) puedan consultar sus métricas.
