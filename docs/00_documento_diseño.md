@@ -307,7 +307,7 @@ Los siguientes pasos a tomar para la segunda etapa es avanzar sobre la implement
 
 Pipeline batch: donde se cargan los archivos CSV hacia Landing Zone, para procesarlos con PySpark y se genera la capa Bronze en formato Parquet con metadatos de carga, y así poder aplicar las transformaciones de limpieza, joins y normalización de moneda en Silver.
 
-Pipeline streaming:  se configura PySpark Structured Streaming para la ingesta continua de los archivos JSONL, para  garantizar un re-procesamiento seguro mediante checkpoints y aplicando los filtros de calidad definidos en Silver Stream.
+Pipeline streaming:  se configura PySpark Structured Streaming para la ingesta continua de los archivos JSONL, para  garantizar un re-procesamiento seguro  y aplicando los filtros de calidad definidos en Silver Stream.
 
 Construir la capa Gold: se generan las métricas de negocio a partir de los datos ya procesados en Silver Batch y Silver Stream, incluyendo los costos por organización, volumen de tickets y uso de servicios, etc.
 
