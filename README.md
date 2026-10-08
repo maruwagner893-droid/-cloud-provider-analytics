@@ -72,3 +72,9 @@ La documentación detallada de diseño se encuentra en: `docs/`
 
 ## Evidencias
 Capturas de pantalla, validaciones y decisiones tomadas durante el desarrollo: `evidence/`
+
+## Cómo ejecutar
+1. Clonar el repositorio
+2. Copiar `cloud_provider_challenge_dataset_v1.zip` en la carpeta `data/`
+3. Instalar dependencias: `pip install -r requirements.txt`
+4. Abrir `notebooks/Exploracion_Cloud_Provider_Analytics.ipynb` y ejecutar todas las celdas
