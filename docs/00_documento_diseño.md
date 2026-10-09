@@ -241,16 +241,29 @@ para que PySpark pueda leerlos sin la necesidad de consultar todo.
 7. 
 ## 9. Flujo MapReduce de referencia
 
-En la etapa Map, PySpark distribuye los registros de las fuentes de datos entre los nodos del cluster. Cada nodo procesa su parte y formula los pares clave-valor, en el proyecto se tienen los siguientes casos: 
+En la etapa Map, PySpark distribuye los registros de las fuentes de datos entre los nodos del cluster. Cada nodo procesa su parte y formula los pares clave-valor, en el proyecto se tienen los siguientes casos:
 billing_monthly → (org_id, subtotal × exchange_rate_to_usd)
 support_tickets → (org_id, 1)
 usage_events_stream → (org_id + service, genai_tokens)
-En donde Cada nodo del cluster procesa una parte de esos archivos en paralelo
+En donde cada nodo del cluster procesa una parte de esos archivos en paralelo.
 
- luego en Shuffle:PySpark redistribuye los pares por clave y todos los registros de la misma organización se juntan en el mismo nodo
+Luego en Shuffle: PySpark redistribuye los pares por clave y todos los registros de la misma organización se juntan en el mismo nodo.
 
- Por ultimo en Reduce: PySpark agrega los valores agrupados y produce las métricas  y los  resultados se escriben en Gold y luego en Cassandra.
+Por último en Reduce: PySpark agrega los valores agrupados y produce las métricas y los resultados se escriben en Gold y luego en Cassandra.
 
+Ejemplo del Proyecto con billing_monthly:
+
+Billing_monthly tiene facturas en distintas monedas (USD, ARS, EUR). Para saber cuánto gastó cada organización en total, PySpark hace esto:
+
+Map: lee cada factura y multiplica el subtotal por el tipo de cambio para convertirlo a USD. El resultado es un par (org_id, monto_en_usd).Un ejemplo es que org_001 tiene una factura de 800 ARS, el tipo de cambio es 950, entonces emite (org_001, 760000).
+
+Shuffle: junta todas las facturas de org_001 en un mismo nodo, todas las de org_002 en otro, etc.
+
+Reduce: suma todos los montos de cada organización.Org_001 tenía dos facturas: 1200 USD + 760000 USD = 761200 USD total.
+
+Grano final: al terminar tenemos una sola fila por organización con su costo total en USD.
+
+Validación: se verifica que si sumando todos los totales por org, nos da lo mismo que si sumamos todos los subtotales originales de billing_monthly. Si  esto no coincide, algo salió mal en el Map o el Reduce.
 
 ## 10. Supuestos y riesgos
 ### Supuestos
