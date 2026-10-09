@@ -8,9 +8,14 @@ Hoy, mucha de esta información se arma de forma manual, lo que lleva tiempo y e
 Un dashboard online, actualizado casi en tiempo real, para que el usuario pueda ver el día a día.
 Informes diarios y mensuales, para análisis más consolidados.
 Como objetivos concretos para saber si esto funcionó:
-Reducir el tiempo que hoy toma armar estos informes a mano, comparado con el tiempo que tarda una vez automatizado.
-Reducir los errores que hoy aparecen en los informes, gracias a las reglas de calidad del pipeline.
+
+Reducir el tiempo de generación de reportes de horas (proceso manual) a minutos (proceso automatizado).
+
+Reducir la tasa de registros inválidos por debajo del 5% del total procesado mediante reglas de calidad de datos.
+
 Tener la información disponible rápida y lista para usarla, tanto en el dashboard como en los reportes periódicos.
+
+Entregar métricas con una latencia máxima de 60 segundos desde la llegada del evento.
 
 ## 2. Justificación de la necesidad de Big Data mediante volumen, velocidad, variedad, veracidad y valor
 ### Volumen:
