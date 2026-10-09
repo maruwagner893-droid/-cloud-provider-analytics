@@ -215,21 +215,13 @@ Luego para la capa de presentacion del cliente todos los datos  convergen en la 
 ## 7. Diseño del Data Lake
 El Data Lake se organiza en cinco zonas: Landing, Bronze, Silver y Gold como zonas progresivas, y Quarantine para los registros inválidos.
 
-En landing se guardan los datos como están, sin modificarse. Bronze toma esos 
-datos y los tipifica, agrega columnas extra para saber cuándo y de dónde 
-vinieron, como por ejemplo ingest_ts y source_file.
-En Silver limpiamos los datos: se sacan los duplicados si tienen, se arreglan los nulos. 
-Por último, en Gold se producen las métricas finales para que los usuarios 
-de FinOps, Soporte y Producto puedan consultarlas.
+En landing se guardan los datos como están, sin modificarse. Bronze toma esos datos y los tipifica, agrega columnas extra para saber cuándo y de dónde vinieron, como por ejemplo ingest_ts y source_file. En Silver limpiamos los datos: se sacan los duplicados si tienen, se arreglan los nulos. Por último, en Gold se producen las métricas finales para que los usuarios de FinOps, Soporte y Producto puedan consultarlas.
 
-Los archivos en Bronze, Silver y Gold se guardan en formato Parquet en 
-vez de CSV porque se guardan los datos por columnas y comprimidos. Si 
-PySpark necesita solo algunos de esos datos, lee solo la columna y no el 
-archivo completo. En el proyecto tenemos 43.200 eventos y múltiples tablas, 
-y con esto lo podemos hacer más rápido y que ocupe menos espacio.
+Los archivos en Bronze, Silver y Gold se guardan en formato Parquet en vez de CSV porque se guardan los datos por columnas y comprimidos. Si PySpark necesita solo algunos de esos datos, lee solo la columna y no el archivo completo. En el proyecto tenemos 43.200 eventos y múltiples tablas, y con esto lo podemos hacer más rápido y que ocupe menos espacio.
 
-Dentro de cada zona los archivos se organizan por año, mes y organización 
-para que PySpark pueda leerlos sin la necesidad de consultar todo.
+Dentro de cada zona los archivos se organizan por año, mes y organización para que PySpark pueda leerlos sin la necesidad de consultar todo:La organización de estos archivos en formato year/month/org_id responde al patrón de consulta de las tres áreas de negocio, donde siempre filtran por organización y por período de tiempo. Con esta estructura, PySpark aplica partition pruning y accede únicamente a las carpetas que corresponden al filtro, sin necesidad de escanear el dataset completo. En un escenario de producción con miles de organizaciones, esto reduce significativamente el tiempo de procesamiento y el costo de lectura.
+
+En Landing los datos se conservan 30 días, ya que una vez ingeridos en Bronze los archivos crudos no son necesarios. En Bronze y Silver se mantiene una retención de 1 año, lo que permite reprocesar desde el origen ante errores en la lógica de transformación o recalcular métricas de Gold sin volver a la capa de limpieza. En Gold los datos se conservan indefinidamente, dado que son las métricas de negocio consultadas continuamente por las tres áreas. En Quarantine la retención es de 90 días, que es el período disponible para revisión manual antes del descarte definitivo.
 
 ## 8. Flujo batch y streaming
 
