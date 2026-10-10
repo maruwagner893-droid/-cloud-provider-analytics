@@ -24,3 +24,7 @@ En la exploración se verificó que los 10.800 registros con carbon_kg nulo coin
 ## Por qué se usa Parquet y no CSV en Bronze, Silver y Gold
 
 Parquet guarda los datos por columnas y comprimidos. Si PySpark necesita solo algunos campos, lee solo esas columnas sin abrir el archivo completo. Con 43.200 eventos y múltiples tablas, esto hace el procesamiento más rápido y ocupa menos espacio que CSV.
+
+## Por qué el watermark es de 10 minutos
+
+El watermark se aplica sobre el campo timestamp de usage_events_stream para manejar eventos que llegan tarde al pipeline. El valor de 10 minutos viene de mirar los datos reales: el dataset tiene 43.200 eventos en 60 días, lo que da un evento cada 2 minutos en promedio. Eso nos dice que los eventos se generan  de forma seguido , así que entre que pasa el evento y que nosotros lo recibimos pasan pocos minutos.Por ello con 10 minutos tenemos margen para cualquier demora normal sin que Spark acumule estado de más. Si poníamos 1 hora, Spark guardaba en memoria una hora de eventos sin necesidad; si poníamos 1 minuto, corríamos el riesgo de descartar eventos que llegaron apenas tarde pero que son válidos.
