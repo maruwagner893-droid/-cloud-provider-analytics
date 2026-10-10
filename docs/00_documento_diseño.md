@@ -278,12 +278,15 @@ Se asume que el campo exchange_rate_to_usd existe en la tabla billing_monthly y 
 
 Se asume que para poder unir con joins distintas tablas es necesario tener un campo en común entre ellas, en este caso org_id.
 
+
 ### Riesgos
 El diseño actual no contempla corregir datos en cuarentena, ya que se los separa para no contaminar; caso contrario los datos serían inconsistentes.
 
 El campo credits tiene un 57% de valores nulos y no está definido en Silver cómo tratarlos, lo que puede afectar los resultados en Gold siendo estos poco confiables.
 
 Si aparece una versión 3 del schema, se tendrá que volver a modificar las capas para poder limpiar y mostrar los datos, es decir que se tendría que tocar todo el proceso.
+
+La partición por year/month/org_id con el volumen actual del dataset genera archivos pequeños: con 43.200 eventos distribuidos en 2 meses y 80 organizaciones, cada partición termina con aproximadamente 270 eventos. En vez de leer un archivo grande de una sola vez, Spark tiene que abrir, leer y cerrar cientos de archivos chicos uno por uno, lo que consume tiempo y recursos extra que no aportan nada al cálculo.
 
 ## Mitigación de los Riesgos
 
