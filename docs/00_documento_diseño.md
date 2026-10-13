@@ -243,10 +243,10 @@ En Landing los datos se conservan 30 días, ya que una vez ingeridos en Bronze l
 5. Desde Silver Stream converge con el camino batch en Gold.
 6. Desde Gold se escribe en Cassandra/AstraDB.
 7. Para el procesamiento en tiempo real, definimos un watermark de 10 minutos sobre el campo timestamp de usage_events_stream. Esto le indica a Spark cuánto tiempo tiene que esperar por eventos que llegan tarde antes de cerrar una ventana y descartar lo que no llegó. Si el evento más reciente procesado tiene timestamp de 10:00, Spark sigue aceptando eventos de esa ventana hasta las 9:50; cualquier evento con timestamp anterior a ese se descarta. Elegimos 10 minutos porque, revisando el dataset, los eventos de uso de servicios cloud se registran casi en tiempo real y los micro-lotes muestran eventos que llegan con pocos minutos de diferencia entre sí, es decir el dataset tiene 43.200 eventos en 60 días, lo que da un promedio de 720 eventos por día, o sea aproximadamente un evento cada 2 minutos. Eso te dice que el sistema genera eventos con bastante frecuencia y de forma casi continua. Por lo que  10 minutos cubrimos la latencia típica de red sin acumular demasiado estado en memoria, ya que si poníamos 1 hora, Spark guardaba en memoria eventos de la última hora sin necesidad;  y si poníamos 1 minuto, corríamos el riesgo de descartar eventos que llegaron apenas tarde pero que son válidos.
-## 9. Flujo MapReduce de referencia
 
-En la etapa Map, PySpark distribuye los registros de las fuentes de datos entre los nodos del cluster. Cada nodo procesa su parte y formula los pares clave-valor, en el proyecto se tienen los siguientes casos:
-billing_monthly → (org_id, subtotal × exchange_rate_to_usd)
+## Flujo MapReduce de referencia
+En la etapa Map, PySpark distribuye los registros de las fuentes de datos entre los nodos del cluster. Cada nodo procesa su parte y formula los pares clave-valor, en el proyecto se tienen los siguientes casos: 
+billing_monthly → (org_id, subtotal × exchange_rate_to_usd) 
 support_tickets → (org_id, 1)
 usage_events_stream → (org_id + service, genai_tokens)
 En donde cada nodo del cluster procesa una parte de esos archivos en paralelo.
@@ -255,19 +255,19 @@ Luego en Shuffle: PySpark redistribuye los pares por clave y todos los registros
 
 Por último en Reduce: PySpark agrega los valores agrupados y produce las métricas y los resultados se escriben en Gold y luego en Cassandra.
 
-Ejemplo del Proyecto con billing_monthly:
+Caso desarrollado: billing_monthly
 
 Billing_monthly tiene facturas en distintas monedas (USD, ARS, EUR). Para saber cuánto gastó cada organización en total, PySpark hace esto:
 
-Map: lee cada factura y multiplica el subtotal por el tipo de cambio para convertirlo a USD. El resultado es un par (org_id, monto_en_usd).Un ejemplo es que org_001 tiene una factura de 800 ARS, el tipo de cambio es 950, entonces emite (org_001, 760000).
+Map: lee cada factura y multiplica el subtotal por el tipo de cambio para convertirlo a USD. El resultado es un par (org_id, monto_en_usd). Un ejemplo es que org_001 tiene una factura de 800 ARS, el tipo de cambio es 0.00133 (cuántos dólares vale 1 peso), entonces emite (org_001, 1.06). También tiene una factura de 1200 USD con tipo de cambio 1.0, entonces emite (org_001, 1200.00).
 
 Shuffle: junta todas las facturas de org_001 en un mismo nodo, todas las de org_002 en otro, etc.
 
-Reduce: suma todos los montos de cada organización.Org_001 tenía dos facturas: 1200 USD + 760000 USD = 761200 USD total.
+Reduce: suma todos los montos de cada organización. Org_001 tenía dos facturas: 1200.00 USD + 1.06 USD = 1201.06 USD total.
 
 Grano final: al terminar tenemos una sola fila por organización con su costo total en USD.
 
-Validación: se verifica que si sumando todos los totales por org, nos da lo mismo que si sumamos todos los subtotales originales de billing_monthly. Si  esto no coincide, algo salió mal en el Map o el Reduce.
+Validación: total_usd no puede ser nulo; si credits es nulo se trata como 0. No se puede verificar sumando los subtotales originales porque están en monedas distintas. Para validar se toman las facturas en USD (exchange_rate_to_usd = 1.0) y se verifica que el total_usd coincida con el subtotal original.
 
 ## 10. Supuestos y riesgos
 ### Supuestos
