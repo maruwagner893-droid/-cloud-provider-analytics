@@ -31,4 +31,4 @@ Nulos en credits (57.08%), y un subtotal negativo (-1671.83). Estos valores no s
 Nulos en value (2.03%), unit (4.80%), carbon_kg (25%) y genai_tokens (92.75%); además costos negativos en cost_usd_increment. Los nulos de carbon_kg coinciden exactamente con los registros de schema_version = 1, lo que indica una evolución del esquema y no un error aleatorio. La columna value tiene tipo object en vez de numérico, lo que impide cálculos de consumo. La columna timestamp está guardada como texto en vez de datetime.
 
 
-Ninguna tabla muestra filas duplicadas. Todas las tablas tienen columnas de fecha guardadas como texto. Los nulos de carbon_kg y genai_tokens en usage_events_stream son estructurales por el cambio de schema_version = 1 a v2, no errores de carga.
+Se verifico que ninguna de las tablas muestran filas duplicadas. Ademas todas las tablas tienen columnas de fecha guardadas como texto. Los nulos de carbon_kg y genai_tokens en usage_events_stream son parte del diseño por el cambio de schema_version = 1 a v2, no errores de carga.
