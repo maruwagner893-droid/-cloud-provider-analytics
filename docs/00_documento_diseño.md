@@ -133,12 +133,12 @@ flowchart TD
 
     subgraph BATCH["🔄 Capa Batch — Patrón Lambda"]
         BRZ_B["Bronze\nTipado · Parquet · Metadatos de ingesta"]
-        SLV_B["Silver\nLimpieza · Joins · Moneda normalizada\nEsquema v1/v2 unificado"]
+        SLV_B["Silver\nLimpieza · Joins · Moneda normalizada"]
     end
 
     subgraph STREAM["⚡ Capa Streaming — Patrón Lambda"]
         BRZ_S["Bronze Stream\nIngesta JSONL · Parquet"]
-        SLV_S["Silver Stream\nFiltros · Idempotencia · Anomalías"]
+        SLV_S["Silver Stream\nFiltros · Idempotencia · Anomalías\nEsquema v1/v2 unificado"]
     end
 
     subgraph GZ["🥇 Gold Zone — Métricas de Negocio"]
