@@ -18,6 +18,7 @@ Tener la información disponible rápida y lista para usarla, tanto en el dashbo
 Entregar métricas con una latencia máxima de 60 segundos desde la llegada del evento.
 
 ## 2. Justificación de la necesidad de Big Data mediante volumen, velocidad, variedad, veracidad y valor
+
 ### Volumen:
 Por la cantidad de datos que se manejan.
 Aunque solo se tiene 80 organizaciones, cada una genera eventos de uso constantemente  y en 60 días ya se acumularon en total  43.200 registros solo de esa tabla, además sumado a los tickets (1000), usuarios (800) y recursos (400), cruzar toda esta información a mano o en Excel se vuelve inmanejable, más aún pensando que en producción real serían miles de organizaciones, no 80.
