@@ -258,16 +258,16 @@ Por último en Reduce: PySpark agrega los valores agrupados y produce las métri
 
 Caso desarrollado: billing_monthly
 
-Billing_monthly tiene facturas en distintas monedas (USD, ARS, EUR). Para saber cuánto gastó cada organización en total, PySpark hace esto:
-
-Map: lee cada factura y multiplica el subtotal por el tipo de cambio para convertirlo a USD. El resultado es un par (org_id, monto_en_usd). Un ejemplo es que org_001 tiene una factura de 800 ARS, el tipo de cambio es 0.00133 (cuántos dólares vale 1 peso), entonces emite (org_001, 1.06). También tiene una factura de 1200 USD con tipo de cambio 1.0, entonces emite (org_001, 1200.00).
-
-Shuffle: junta todas las facturas de org_001 en un mismo nodo, todas las de org_002 en otro, etc.
-
-Reduce: suma todos los montos de cada organización. Org_001 tenía dos facturas: 1200.00 USD + 1.06 USD = 1201.06 USD total.
-
+En Billing_monthly tenemos facturas en distintas monedas (USD, ARS, EUR). Para saber cuánto gastó cada organización en total, PySpark hace esto:
+ 
+Map: lee cada factura y multiplica el subtotal por el tipo de cambio para convertirlo a USD. El resultado es un par (org_id, monto_en_usd). Como ejemplo, org_xaji0y6d tiene 3 facturas. Las dos primeras ya vienen en USD así que el valor queda tal cual: 1133.34 y 619.17. La tercera viene en ARS, entonces hay que convertirla: 540.79 × 0.00160 = 0.87 USD.
+ 
+Shuffle: junta todas las facturas de org_xaji0y6d en un mismo nodo, todas las de org_pbhsahxt en otro, etc.
+ 
+Reduce: suma todos los montos de cada organización. org_xaji0y6d tenía tres facturas: 1133.34 USD + 619.17 USD + 0.87 USD = 1753.38 USD total.
+ 
 Grano final: al terminar tenemos una sola fila por organización con su costo total en USD.
-
+ 
 Validación: total_usd no puede ser nulo; si credits es nulo se trata como 0. No se puede verificar sumando los subtotales originales porque están en monedas distintas. Para validar se toman las facturas en USD (exchange_rate_to_usd = 1.0) y se verifica que el total_usd coincida con el subtotal original.
 
 ## 10. Supuestos y riesgos
